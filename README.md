@@ -1,10 +1,10 @@
 # CG 2024/2025
 
-## Group T0xG0y
+## Group T11G09
 | Name             | Number    | E-Mail             |
 | ---------------- | --------- | ------------------ |
-| John Doe         | 201901010 | ...                |
-| Jane Doe         | 201901011 | ...                |
+| Diogo Salazar Ramos         | 202207954 | up202207954@up.pt                |
+| Guilherme Silveira Rego         | 202207041 | up202207041@up.pt                |
 
 ----
 
