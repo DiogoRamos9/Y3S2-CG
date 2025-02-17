@@ -38,6 +38,7 @@ export class MyScene extends CGFscene {
 
     //Objects connected to MyInterface
     this.displayAxis = true;
+    this.displayTriangle = true;
     this.scaleFactor = 1;
     this.displayDiamond = false;
     this.displayTriangle = false;
@@ -124,7 +125,7 @@ export class MyScene extends CGFscene {
     if (this.displayTriangleBig) {
       this.triangleBig.display();
     }
-
+    
     // ---- END Primitive drawing section
   }
 }
