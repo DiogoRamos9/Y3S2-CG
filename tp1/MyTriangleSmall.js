@@ -29,4 +29,3 @@ export class MyTriangleSmall extends CGFobject {
         this.initGLBuffers();
     }
 }
-

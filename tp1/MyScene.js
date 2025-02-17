@@ -125,7 +125,8 @@ export class MyScene extends CGFscene {
     if (this.displayTriangleBig) {
       this.triangleBig.display();
     }
-    
+
     // ---- END Primitive drawing section
   }
 }
+
