@@ -9,7 +9,7 @@
 - In exercise 2, as we already had the **MyTriangle.js**, it was easy to create **MyTriangleSmall** and **MyTriangleBig**.
 
 ![Small Triangle](screenshots/G-t11g09-tp1-1small.PNG)
-<p align="center">Figure 2: Small Triangle</p>
+<p align="center">Figure 1: Small Triangle</p>
 
 ![Big Triangle](screenshots/G-t11g09-tp1-1big.PNG)
-<p align="center">Figure 1: Big Triangle</p>
+<p align="center">Figure 2: Big Triangle</p>
