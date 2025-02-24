@@ -128,7 +128,7 @@ export class MyScene extends CGFscene {
       this.triangleBig.display();
     }
 
-    if (this.tangram) {
+    if (this.displayTangram) {
       this.tangram.display();
     }
 
