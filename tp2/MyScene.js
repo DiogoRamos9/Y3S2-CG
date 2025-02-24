@@ -35,7 +35,6 @@ export class MyScene extends CGFscene {
     this.triangleSmall = new MyTriangleSmall(this);
     this.triangleBig = new MyTriangleBig(this);
 
-
     //Objects connected to MyInterface
     this.displayAxis = true;
     this.displayTriangle = true;
@@ -45,6 +44,7 @@ export class MyScene extends CGFscene {
     this.displayParallelogram = false;
     this.displayTriangleSmall = false;
     this.displayTriangleBig = false;
+    this.displayTangram = false;
   }
   initLights() {
     this.lights[0].setPosition(15, 2, 5, 1);
@@ -125,6 +125,47 @@ export class MyScene extends CGFscene {
     if (this.displayTriangleBig) {
       this.triangleBig.display();
     }
+
+    this.translate(0.5, 0, 0);
+    this.triangleSmall.display();
+
+    var T2trans = [
+      1.0, 0.0, 0.0, 0.0,
+      0.0, 1.0, 0.0, 0.0,
+      0.0, 0.0, 1.0, 0.0,
+      -1.0, 0.5, 0.0, 1.0,
+    ]
+
+    this.pushMatrix();
+    this.multMatrix(T2trans);
+    this.triangle.display();
+    this.popMatrix();
+
+    var T3trans = [
+      1.0, 0.0, 0.0, 0.0,
+      0.0, 1.0, 0.0, 0.0,
+      0.0, 0.0, 1.0, 0.0,
+      1.5, -0.5, 0.0, 1.0,
+    ]
+
+    var T3sca = [
+      0.75, 0.0, 0.0, 0.0,
+      0.0, 0.75, 0.0, 0.0,
+      0.0, 0.0, 0.75, 0.0,
+      0.0, 0.0, 0.0, 1.0,
+    ]
+
+    this.pushMatrix();
+    this.multMatrix(T3trans);
+    this.multMatrix(T3sca);
+    this.triangleBig.display();
+    this.popMatrix();
+    
+
+    // Push
+    // Mult
+    // Pop
+    // ...
 
     // ---- END Primitive drawing section
   }
