@@ -9,6 +9,9 @@
 ![Tangram](screenshots/G-t11g09-tp2-1-tangram.PNG)
 <p align="center">Figure 1: Tangram</p>
 
-- In exercise 2...
+- In Exercise 2 we built a unit cube centered on the origin and applied some geometric transformations to it, such as rotation and translation.Then we combined the tangram created in Exercise 1, using the same transformations.
+
+![Unit Cube](screenshots/G-t11g09-tp2-2-UnitCube.PNG)
+<p align="center">Figure 2: Unit Cube</p>
 
 - In exercise 3...
