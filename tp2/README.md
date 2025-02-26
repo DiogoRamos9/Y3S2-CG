@@ -14,4 +14,7 @@
 ![Unit Cube](screenshots/G-t11g09-tp2-2-UnitCube.PNG)
 <p align="center">Figure 2: Unit Cube</p>
 
-- In exercise 3...
+- In exercise 3 we started by building a basic square centred on (0,0,0), then created MyUnitCubeQuad.js with 6 views of the Myquad instance and some transformations to make a cube. We noticed that it was easier to build the unit cube with 6 squares than with just triangles as in exercise 2.
+
+![Unit Cube Quad](screenshots/G-t11g09-tp2-3-UnitCubeQuad.PNG)
+<p align="center">Figure 3: Unit Cube Quad</p>

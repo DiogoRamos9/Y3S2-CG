@@ -38,6 +38,8 @@ export class MyInterface extends CGFinterface {
 
         this.gui.add(this.scene, 'displayUnitCube').name('Display UnitCube');
 
+        this.gui.add(this.scene, 'displayUnitCubeQuad').name('Display UCQuad');
+
         return true;
     }
 }
