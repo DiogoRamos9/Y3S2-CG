@@ -18,4 +18,7 @@
 <p align="center">Figure 3: Prism</p>
 
 
-- Exercise 3...
+- In Exercise 3 the normal vector were placed perpendicular to the vertices, as expected the number of vertices and normal vectors were reduced. Finally,the cylinder looks more rounded with this new method.
+
+![Cylinder](screenshots/G-t11g09-tp3-3Cylinder.PNG)
+<p align="center">Figure 4: Cylinder</p>
