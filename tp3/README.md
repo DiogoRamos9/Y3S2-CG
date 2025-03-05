@@ -12,6 +12,10 @@
 ![Tangram](screenshots/G-t11g09-tp3-1-Tangram.png)
 <p align="center">Figure 2: Tangram</p>
 
-- Exercise 2...
+- In Exercise 2 we started by implementing an algorithm to draw a prism with variable faces and then extended it to variable partitions. The illumination is very similar to constant shading because the normals are the same for the same face.
+
+![Prism](screenshots/G-t11g09-tp3-2prism.PNG)
+<p align="center">Figure 3: Prism</p>
+
 
 - Exercise 3...
