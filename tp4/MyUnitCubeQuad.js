@@ -1,5 +1,5 @@
 import {CGFobject} from '../lib/CGF.js';
-import {MyQuad} from './MyQuad.js';
+import {MyQuad} from '../tp2/MyQuad.js';
 /**
  * MyUnitCubeQuad
  * @constructor
