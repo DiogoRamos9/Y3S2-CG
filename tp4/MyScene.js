@@ -1,6 +1,8 @@
 import { CGFscene, CGFcamera, CGFaxis, CGFappearance, CGFtexture } from "../lib/CGF.js";
 import { MyQuad } from "./MyQuad.js";
 import { MyTangram } from "./MyTangram.js";
+import { MyUnitCubeQuad } from "./MyUnitCubeQuad.js";
+
 /**
  * MyScene
  * @constructor
@@ -24,11 +26,6 @@ export class MyScene extends CGFscene {
         this.gl.depthFunc(this.gl.LEQUAL);
         this.enableTextures(true);
 
-        //Initialize scene objects
-        this.axis = new CGFaxis(this);
-        this.quad = new MyQuad(this);
-        this.tangram = new MyTangram(this);
-
         //------ Applied Material
         this.quadMaterial = new CGFappearance(this);
         this.quadMaterial.setAmbient(0.1, 0.1, 0.1, 1);
@@ -43,12 +40,22 @@ export class MyScene extends CGFscene {
         this.texture1 = new CGFtexture(this, 'images/board.jpg');
         this.texture2 = new CGFtexture(this, 'images/floor.png');
         this.texture3 = new CGFtexture(this, 'images/window.jpg');
+        this.textureTop = new CGFtexture(this, 'images/mineTop.png');
+        this.textureSide = new CGFtexture(this, 'images/mineSide.png');
+        this.textureBottom = new CGFtexture(this, 'images/mineBottom.png');
         //-------
+
+        //-------Initialize scene objects
+        this.axis = new CGFaxis(this);
+        this.quad = new MyQuad(this);
+        this.tangram = new MyTangram(this);
+        this.cube = new MyUnitCubeQuad(this, this.textureTop, this.textureSide, this.textureSide, this.textureSide, this.textureSide, this.textureBottom);
 
         //-------Objects connected to MyInterface
         this.displayAxis = true;
         this.displayQuad = false;
-        this.displayTangram = true;
+        this.displayTangram = false;
+        this.displayCube = true;
         this.scaleFactor = 5;
         this.selectedTexture = -1;        
         this.wrapS = 0;
@@ -119,14 +126,22 @@ export class MyScene extends CGFscene {
 
         // ---- BEGIN Primitive drawing section
 
-        if(this.displayQuad){
-            this.quadMaterial.apply();
+        if (this.displayQuad){
+            this.quadMaterial.apply(); 
             this.quad.display();
         }
 
-        if(this.displayTangram){
+        if (this.displayTangram) {
             this.tangram.display();
         }
+
+        if (this.displayCube) {
+            this.cube.display();
+        }
+
+        // ---- END Primitive drawing section
+    
+
         // Default texture filtering in WebCGF is LINEAR. 
         // Uncomment next line for NEAREST when magnifying, or 
         // add a checkbox in the GUI to alternate in real time
