@@ -71,11 +71,11 @@ export class ShaderScene extends CGFscene {
 		this.appearance.setSpecular(0.0, 0.0, 0.0, 1);
 		this.appearance.setShininess(120);
 
-		this.texture = new CGFtexture(this, "textures/texture.jpg");
+		this.texture = new CGFtexture(this, "textures/waterTex.jpg");
 		this.appearance.setTexture(this.texture);
 		this.appearance.setTextureWrap('REPEAT', 'REPEAT');
 
-		this.texture2 = new CGFtexture(this, "textures/FEUP.jpg");
+		this.texture2 = new CGFtexture(this, "textures/waterMap.jpg");
 
 		// shaders initialization
 
@@ -88,7 +88,10 @@ export class ShaderScene extends CGFscene {
 			new CGFshader(this.gl, "shaders/texture3.vert", "shaders/texture3.frag"),
 			new CGFshader(this.gl, "shaders/texture3anim.vert", "shaders/texture3anim.frag"),
 			new CGFshader(this.gl, "shaders/texture1.vert", "shaders/sepia.frag"),
-			new CGFshader(this.gl, "shaders/texture1.vert", "shaders/convolution.frag")
+			new CGFshader(this.gl, "shaders/texture1.vert", "shaders/convolution.frag"),
+			new CGFshader(this.gl, "shaders/first.vert", "shaders/first.frag"),
+			new CGFshader(this.gl, "shaders/texture1.vert", "shaders/gray.frag"),
+			new CGFshader(this.gl, "shaders/water.vert", "shaders/water.frag")
 		];
 
 		// additional texture will have to be bound to texture unit 1 later, when using the shader, with "this.texture2.bind(1);"
@@ -109,7 +112,10 @@ export class ShaderScene extends CGFscene {
 			'Multiple textures in VS and FS': 5,
 			'Animation example': 6,
 			'Sepia': 7,
-			'Convolution': 8
+			'Convolution': 8,
+			'Bule Colors': 9,
+			'Gray Colors': 10,
+			'Water': 11
 		};
 
 		// shader code panels references
@@ -195,6 +201,8 @@ export class ShaderScene extends CGFscene {
 			// Doing the modulus (%) by 100 makes the timeFactor loop between 0 and 99
 			// ( so the loop period of timeFactor is 100 times 100 ms = 10s ; the actual animation loop depends on how timeFactor is used in the shader )
 			this.testShaders[6].setUniformsValues({ timeFactor: t / 100 % 100 });
+			this.testShaders[9].setUniformsValues({ timeFactor: t / 100 % 100 });
+			this.testShaders[11].setUniformsValues({ timeFactor: t / 100 % 100 });
 	}
 
 	// main display function
