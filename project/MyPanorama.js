@@ -1,8 +1,9 @@
 import { CGFappearance, CGFobject } from '../lib/CGF.js';
 import { MySphere } from './MySphere.js';
 
-export class MyPanorama {
+export class MyPanorama extends CGFobject {
     constructor(scene, texture) {
+        super(scene);
         this.scene = scene;
 
     

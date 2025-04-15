@@ -2,6 +2,10 @@ import { CGFscene, CGFcamera, CGFaxis, CGFappearance, CGFshader, CGFtexture } fr
 import { MyPlane } from "./MyPlane.js";
 import { MySphere } from "./MySphere.js";
 import { MyPanorama } from "./MyPanorama.js";
+import { MyWindow } from "./Mywindow.js";
+import { MyDoor } from "./MyDoor.js";
+import { MyBuilding } from "./MyBuilding.js";
+import { MyCircle } from "./MyCircle.js";
 
 /**
  * MyScene
@@ -35,23 +39,51 @@ export class MyScene extends CGFscene {
     this.panoramaappearance.setTexture(this.panoramaTexture);
     this.panoramaappearance.setTextureWrap("REPEAT", "REPEAT");
 
+    this.windowTexture = new CGFtexture(this, "texture/window.jpg");
+    this.windowappearance = new CGFappearance(this);
+    this.windowappearance.setTexture(this.windowTexture);
+    this.windowappearance.setTextureWrap("REPEAT", "REPEAT");
+
+    this.doorTexture = new CGFtexture(this, "texture/door.png");
+    this.doorappearance = new CGFappearance(this);
+    this.doorappearance.setTexture(this.doorTexture);
+    this.doorappearance.setTextureWrap("REPEAT", "REPEAT");
+
+    this.placarTexture = new CGFtexture(this, "texture/letreiro.png");
+    this.placarappearance = new CGFappearance(this);
+    this.placarappearance.setTexture(this.placarTexture);
+    this.placarappearance.setTextureWrap("REPEAT", "REPEAT");
+
     //Initialize scene objects
     this.axis = new CGFaxis(this, 20, 1);
     this.plane = new MyPlane(this, 64);
     this.sphere = new MySphere(this, false, 64, 64, true);
     this.panorama = new MyPanorama(this, this.panoramaTexture);
+    this.window = new MyWindow(this, this.windowTexture);
+    this.door = new MyDoor(this, this.doorTexture, this.placarTexture);
+    this.building = new MyBuilding(this, 30, 4, 2, this.windowTexture, [0.8, 0.8, 0.8], this.doorTexture, this.placarTexture);
+    
 
     this.displayAxis = true;
     this.displayPlane = false;
     this.displaySphere = true;
     this.displayPanorama = false;
+    this.displayWindow = false;
+    this.displayDoor = false;
+    this.displayBuilding = false;
+    
 
 
     this.earthTexture = new CGFtexture(this, "texture/earth.jpg");
     this.earthappearance = new CGFappearance(this);
     this.earthappearance.setTexture(this.earthTexture);
     this.earthappearance.setTextureWrap("REPEAT", "REPEAT");
+    
 
+    this.grassTexture = new CGFtexture(this, "texture/grass.jpg");
+    this.grassappearance = new CGFappearance(this);
+    this.grassappearance.setTexture(this.grassTexture);
+    this.grassappearance.setTextureWrap("REPEAT", "REPEAT");
     
     
   }
@@ -120,6 +152,7 @@ export class MyScene extends CGFscene {
     if(this.displayPlane){
       this.scale(400, 1, 400);
       this.rotate(-Math.PI / 2, 1, 0, 0);
+      this.grassappearance.apply();
       this.plane.display();
     }
 
@@ -134,5 +167,20 @@ export class MyScene extends CGFscene {
       this.panorama.display();
     }
     
+    if(this.displayWindow){
+      this.window.display();
+    }
+
+    if(this.displayDoor){
+      this.door.display();
+    }
+    
+    if(this.displayBuilding){
+      this.building.display();
+    }
+
+    
+    
+
   }
 }
