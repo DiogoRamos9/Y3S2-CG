@@ -6,6 +6,7 @@ import { MyWindow } from "./Mywindow.js";
 import { MyDoor } from "./MyDoor.js";
 import { MyBuilding } from "./MyBuilding.js";
 import { MyCircle } from "./MyCircle.js";
+import { MyTree } from "./MyTree.js";
 
 /**
  * MyScene
@@ -14,7 +15,15 @@ import { MyCircle } from "./MyCircle.js";
 export class MyScene extends CGFscene {
   constructor() {
     super();
+
+    // Default tree parameters
+    this.treeInclination = 0; // Inclination in radians
+    this.xInclination = true; // Inclination axis (true for X, false for Z)
+    this.trunkRadius = 0.5; // Radius of the trunk
+    this.treeHeight = 5; // Height of the tree
+    this.treeTopColor = [51, 204, 51]; // Default green color in RGB
   }
+
   init(application) {
     super.init(application);
 
@@ -62,16 +71,23 @@ export class MyScene extends CGFscene {
     this.window = new MyWindow(this, this.windowTexture);
     this.door = new MyDoor(this, this.doorTexture, this.placarTexture);
     this.building = new MyBuilding(this, 30, 4, 2, this.windowTexture, [0.8, 0.8, 0.8], this.doorTexture, this.placarTexture);
-    
+    this.tree = new MyTree(
+        this,
+        this.treeInclination,
+        this.xInclination,
+        this.trunkRadius,
+        this.treeHeight,
+        this.treeTopColor.map(c => c / 255) // Convert RGB to [0, 1] range
+    );
 
-    this.displayAxis = true;
+    this.displayAxis = false;
     this.displayPlane = false;
-    this.displaySphere = true;
+    this.displaySphere = false;
     this.displayPanorama = false;
     this.displayWindow = false;
     this.displayDoor = false;
     this.displayBuilding = false;
-    
+    this.displayTree = true;
 
 
     this.earthTexture = new CGFtexture(this, "texture/earth.jpg");
@@ -179,7 +195,17 @@ export class MyScene extends CGFscene {
       this.building.display();
     }
 
-    
+    if (this.displayTree) {
+      this.tree = new MyTree(
+          this,
+          this.treeInclination,
+          this.xInclination,
+          this.trunkRadius,
+          this.treeHeight,
+          this.treeTopColor.map(c => c / 255) // Converter RGB para o intervalo [0, 1]
+      );
+      this.tree.display();
+  }
     
 
   }
