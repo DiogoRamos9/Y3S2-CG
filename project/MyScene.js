@@ -7,6 +7,7 @@ import { MyDoor } from "./MyDoor.js";
 import { MyBuilding } from "./MyBuilding.js";
 import { MyCircle } from "./MyCircle.js";
 import { MyTree } from "./MyTree.js";
+import { MyForest } from "./MyForest.js";
 
 /**
  * MyScene
@@ -79,6 +80,7 @@ export class MyScene extends CGFscene {
         this.treeHeight,
         this.treeTopColor.map(c => c / 255) // Convert RGB to [0, 1] range
     );
+    this.forest = new MyForest(this, 5, 4, 20, 15);
 
     this.displayAxis = false;
     this.displayPlane = false;
@@ -87,7 +89,8 @@ export class MyScene extends CGFscene {
     this.displayWindow = false;
     this.displayDoor = false;
     this.displayBuilding = false;
-    this.displayTree = true;
+    this.displayTree = false;
+    this.displayForest = true;
 
 
     this.earthTexture = new CGFtexture(this, "texture/earth.jpg");
@@ -196,16 +199,25 @@ export class MyScene extends CGFscene {
     }
 
     if (this.displayTree) {
-      this.tree = new MyTree(
-          this,
-          this.treeInclination,
-          this.xInclination,
-          this.trunkRadius,
-          this.treeHeight,
-          this.treeTopColor.map(c => c / 255) // Converter RGB para o intervalo [0, 1]
-      );
-      this.tree.display();
-  }
+        this.tree = new MyTree(
+            this,
+            this.treeInclination,
+            this.xInclination,
+            this.trunkRadius,
+            this.treeHeight,
+            this.treeTopColor.map(c => c / 255) // Converter RGB para o intervalo [0, 1]
+        );
+        this.tree.display();
+    }
+    
+    if (this.displayForest) {
+      this.forest.display();
+    }
+
+    // ---- END Background, camera and axis setup
+
+    // ---- BEGIN Primitive drawing section
+    // ---- END Primitive drawing section
     
 
   }

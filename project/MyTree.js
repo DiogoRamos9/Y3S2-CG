@@ -49,6 +49,11 @@ export class MyTree extends CGFobject {
     display() {
         // Apply inclination transformation
         this.scene.pushMatrix();
+    
+        // Escalar a árvore de forma uniforme
+        const scaleFactor = 3; // Fator de escala (ajuste conforme necessário)
+        this.scene.scale(scaleFactor, scaleFactor, scaleFactor);
+    
         if (this.xInclination) {
             this.scene.rotate(this.treeInclination, 1, 0, 0); // Rotate around X-axis
         } else {
@@ -63,14 +68,10 @@ export class MyTree extends CGFobject {
         this.scene.popMatrix();
     
         // Display the cup (stack of pyramids with overlap)
-        // Display the cup (stack of pyramids with overlap)
         for (let i = 0; i < this.numPyramids; i++) {
-            // Calcular o deslocamento vertical para cada pirâmide
             const heightOffset = this.treeHeight - this.cupHeight + i * (this.cupHeight / this.numPyramids) * 0.35; // Ajuste para sobreposição (0.7 factor)
-            
-            // Calcular o fator de escala para reduzir gradualmente o tamanho das pirâmides
             const scaleFactor = 1 - i / this.numPyramids;
-
+    
             this.scene.pushMatrix();
             this.scene.translate(0, heightOffset, 0); // Posicionar cada pirâmide
             this.scene.scale(scaleFactor, 1, scaleFactor); // Escalar a pirâmide
