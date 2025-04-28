@@ -34,23 +34,15 @@ export class MyPlane extends CGFobject {
 			var xCoord = -0.5;
 			for (var i = 0; i <= this.nrDivs; i++) {
 				this.vertices.push(xCoord, yCoord, 0);
-				this.normals.push(0, 0, 1); // Normals for front face
+				this.normals.push(0, 0, 1);
 				this.texCoords.push(this.minS + i * this.q, this.minT + j * this.w);
 				xCoord += this.patchLength;
 			}
 			yCoord -= this.patchLength;
 		}
-	
-		// Duplicate normals for back faces (inverted)
-		const originalVertices = [...this.vertices];
-		const originalNormals = [...this.normals];
-		for (let i = 0; i < originalVertices.length; i += 3) {
-			this.vertices.push(originalVertices[i], originalVertices[i + 1], originalVertices[i + 2]); // Duplicar vértices
-			this.normals.push(-originalNormals[i], -originalNormals[i + 1], -originalNormals[i + 2]); // Normais invertidas
-		}
-	
 		// Generating indices
 		this.indices = [];
+
 		var ind = 0;
 		for (var j = 0; j < this.nrDivs; j++) {
 			for (var i = 0; i <= this.nrDivs; i++) {
@@ -63,13 +55,6 @@ export class MyPlane extends CGFobject {
 				this.indices.push(ind);
 			}
 		}
-	
-		// Duplicate indices for back faces (inverted order)
-		const originalIndices = [...this.indices];
-		for (let i = 0; i < originalIndices.length; i += 2) {
-			this.indices.push(originalIndices[i + 1], originalIndices[i]);
-		}
-	
 		this.primitiveType = this.scene.gl.TRIANGLE_STRIP;
 		this.initGLBuffers();
 	}

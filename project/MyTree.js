@@ -1,4 +1,4 @@
-import { CGFobject, CGFappearance } from '../lib/CGF.js';
+import { CGFobject, CGFappearance, CGFtexture } from '../lib/CGF.js';
 import { MyCone } from './MyCone.js';
 import { MyPyramid } from './MyPyramid.js';
 
@@ -31,13 +31,19 @@ export class MyTree extends CGFobject {
         }
 
         // Create appearances for trunk and cup
+        this.trunkTexture = new CGFtexture(scene, 'texture/trunk.png');
         this.trunkAppearance = new CGFappearance(scene);
+        this.trunkAppearance.setTexture(this.trunkTexture);
+        this.trunkAppearance.setTextureWrap('REPEAT', 'REPEAT');
         this.trunkAppearance.setAmbient(0.4, 0.2, 0.1, 1.0); // Brown color
         this.trunkAppearance.setDiffuse(0.4, 0.2, 0.1, 1.0);
         this.trunkAppearance.setSpecular(0.1, 0.1, 0.1, 1.0);
         this.trunkAppearance.setShininess(10.0);
 
+        this.cupTexture = new CGFtexture(scene, 'texture/leaf.png');
         this.cupAppearance = new CGFappearance(scene);
+        this.cupAppearance.setTexture(this.cupTexture);
+        this.cupAppearance.setTextureWrap('REPEAT', 'REPEAT');
         this.cupAppearance.setAmbient(this.treeTopColor[0], this.treeTopColor[1], this.treeTopColor[2], 1.0); // Green color
         this.cupAppearance.setDiffuse(this.treeTopColor[0], this.treeTopColor[1], this.treeTopColor[2], 1.0);
         this.cupAppearance.setSpecular(0.1, 0.1, 0.1, 1.0);

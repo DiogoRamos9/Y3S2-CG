@@ -169,17 +169,21 @@ export class MyScene extends CGFscene {
     this.setDefaultAppearance();
     
     if(this.displayPlane){
+      this.pushMatrix();
       this.scale(400, 1, 400);
       this.rotate(-Math.PI / 2, 1, 0, 0);
       this.grassappearance.apply();
       this.plane.display();
+      this.popMatrix();
     }
 
     if(this.displaySphere){
+      this.pushMatrix();
       this.scale(10, 10, 10);
       this.rotate(-Math.PI, 0, 1, 0);
       this.earthappearance.apply();
       this.sphere.display();
+      this.popMatrix();
     }
 
     if(this.displayPanorama){
@@ -211,7 +215,10 @@ export class MyScene extends CGFscene {
     }
     
     if (this.displayForest) {
+      this.pushMatrix();
+      //this.translate(20, 0, 25);
       this.forest.display();
+      this.popMatrix();
     }
 
     // ---- END Background, camera and axis setup

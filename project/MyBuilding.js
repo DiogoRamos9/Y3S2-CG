@@ -60,6 +60,7 @@ export class MyBuilding extends CGFobject {
         // Back Wall
         this.scene.pushMatrix();
         this.scene.translate(x, height / 2, -depth / 2);
+        this.scene.rotate(Math.PI, 0, 1, 0);
         this.scene.scale(width, height, 1);
         this.wallMaterial.apply();
         this.wall.display();
@@ -68,7 +69,7 @@ export class MyBuilding extends CGFobject {
         // Left Wall
         this.scene.pushMatrix();
         this.scene.translate(x - width / 2, height / 2, 0);
-        this.scene.rotate(Math.PI / 2, 0, 1, 0);
+        this.scene.rotate(-Math.PI / 2, 0, 1, 0);
         this.scene.scale(depth, height, 1);
         this.wallMaterial.apply();
         this.wall.display();
@@ -77,7 +78,7 @@ export class MyBuilding extends CGFobject {
         // Right Wall
         this.scene.pushMatrix();
         this.scene.translate(x + width / 2, height / 2, 0);
-        this.scene.rotate(-Math.PI / 2, 0, 1, 0);
+        this.scene.rotate(Math.PI / 2, 0, 1, 0);
         this.scene.scale(depth, height, 1);
         this.wallMaterial.apply();
         this.wall.display();
