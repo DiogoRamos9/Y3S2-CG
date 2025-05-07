@@ -27,6 +27,7 @@ export class MyInterface extends CGFinterface {
         this.gui.add(this.scene, 'displayBuilding').name('Display Building');
         this.gui.add(this.scene, 'displayTree').name('Display Tree');
         this.gui.add(this.scene, 'displayForest').name('Display Forest');
+        this.gui.add(this.scene, 'displayHeli').name('Display Helicopter');
     
         // Add controls for MyTree parameters
         const treeFolder = this.gui.addFolder('Tree Parameters');

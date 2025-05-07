@@ -8,6 +8,7 @@ import { MyBuilding } from "./MyBuilding.js";
 import { MyCircle } from "./MyCircle.js";
 import { MyTree } from "./MyTree.js";
 import { MyForest } from "./MyForest.js";
+import { MyHeli } from "./MyHeli.js";
 
 /**
  * MyScene
@@ -81,8 +82,9 @@ export class MyScene extends CGFscene {
         this.treeTopColor.map(c => c / 255) // Convert RGB to [0, 1] range
     );
     this.forest = new MyForest(this, 5, 4, 20, 15);
+    this.heli = new MyHeli(this);
 
-    this.displayAxis = false;
+    this.displayAxis = true;
     this.displayPlane = false;
     this.displaySphere = false;
     this.displayPanorama = false;
@@ -90,7 +92,8 @@ export class MyScene extends CGFscene {
     this.displayDoor = false;
     this.displayBuilding = false;
     this.displayTree = false;
-    this.displayForest = true;
+    this.displayForest = false;
+    this.displayHeli = false;
 
 
     this.earthTexture = new CGFtexture(this, "texture/earth.jpg");
@@ -216,8 +219,15 @@ export class MyScene extends CGFscene {
     
     if (this.displayForest) {
       this.pushMatrix();
-      //this.translate(20, 0, 25);
+      this.translate(20, 0, 23);
       this.forest.display();
+      this.popMatrix();
+    }
+
+    if (this.displayHeli) {
+      this.pushMatrix();
+      this.scale(10, 10, 10);
+      this.heli.display();
       this.popMatrix();
     }
 
