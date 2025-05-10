@@ -24,6 +24,11 @@ export class MyScene extends CGFscene {
     this.trunkRadius = 0.5; // Radius of the trunk
     this.treeHeight = 5; // Height of the tree
     this.treeTopColor = [51, 204, 51]; // Default green color in RGB
+
+    this.buildingwidth = 30;
+    this.numfloors = 4;
+    this.numwindows = 2;
+
   }
 
   init(application) {
@@ -72,7 +77,11 @@ export class MyScene extends CGFscene {
     this.panorama = new MyPanorama(this, this.panoramaTexture);
     this.window = new MyWindow(this, this.windowTexture);
     this.door = new MyDoor(this, this.doorTexture, this.placarTexture);
-    this.building = new MyBuilding(this, 30, 4, 2, this.windowTexture, [0.8, 0.8, 0.8], this.doorTexture, this.placarTexture);
+
+    this.currentBuildingWidth = this.buildingwidth;
+    this.currentNumFloors = this.numfloors;
+    this.currentNumWindows = this.numwindows;
+    this.building = new MyBuilding(this, this.buildingwidth , this.numfloors, this.numwindows, this.windowTexture, [0.8, 0.8, 0.8], this.doorTexture, this.placarTexture);
     this.tree = new MyTree(
         this,
         this.treeInclination,
@@ -193,17 +202,35 @@ export class MyScene extends CGFscene {
       this.panorama.display();
     }
     
-    if(this.displayWindow){
-      this.window.display();
+    
+    if (this.displayBuilding) {
+  
+    if (
+        this.currentBuildingWidth !== this.buildingwidth ||
+        this.currentNumFloors !== this.numfloors ||
+        this.currentNumWindows !== this.numwindows
+    ) {
+        
+        this.currentBuildingWidth = this.buildingwidth;
+        this.currentNumFloors = this.numfloors;
+        this.currentNumWindows = this.numwindows;
+
+        
+        this.building = new MyBuilding(
+            this,
+            this.buildingwidth,
+            this.numfloors,
+            this.numwindows,
+            this.windowTexture,
+            [0.8, 0.8, 0.8],
+            this.doorTexture,
+            this.placarTexture
+        );
     }
 
-    if(this.displayDoor){
-      this.door.display();
-    }
-    
-    if(this.displayBuilding){
-      this.building.display();
-    }
+   
+    this.building.display();
+}
 
     if (this.displayTree) {
         this.tree = new MyTree(
@@ -226,9 +253,12 @@ export class MyScene extends CGFscene {
 
     if (this.displayHeli) {
       this.pushMatrix();
-      this.scale(10, 10, 10);
+      const buildingHeight = this.building.getCentralHeight();
+      this.translate(0, buildingHeight + 3, 0);
+      this.scale(7 , 6 , 6); 
       this.heli.display();
       this.popMatrix();
+
     }
 
     // ---- END Background, camera and axis setup

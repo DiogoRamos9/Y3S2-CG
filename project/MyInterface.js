@@ -22,13 +22,16 @@ export class MyInterface extends CGFinterface {
         this.gui.add(this.scene, 'displayPlane').name('Display Plane');
         this.gui.add(this.scene, 'displaySphere').name('Display Sphere');
         this.gui.add(this.scene, 'displayPanorama').name('Display Panorama');
-        this.gui.add(this.scene, 'displayWindow').name('Display Window');
-        this.gui.add(this.scene, 'displayDoor').name('Display Door');
         this.gui.add(this.scene, 'displayBuilding').name('Display Building');
         this.gui.add(this.scene, 'displayTree').name('Display Tree');
         this.gui.add(this.scene, 'displayForest').name('Display Forest');
         this.gui.add(this.scene, 'displayHeli').name('Display Helicopter');
-    
+
+        const BuildingFolder = this.gui.addFolder('Building Parameters');
+        BuildingFolder.add(this.scene, 'buildingwidth', 1.0, 200.0).name('Building Width');
+        BuildingFolder.add(this.scene, 'numfloors', 1, 30).name('Number Floors');
+        BuildingFolder.add(this.scene, 'numwindows', 1, 10).name('Number Windows');
+        
         // Add controls for MyTree parameters
         const treeFolder = this.gui.addFolder('Tree Parameters');
         treeFolder.add(this.scene, 'treeInclination', 0, Math.PI / 2).name('Inclination (rad)');

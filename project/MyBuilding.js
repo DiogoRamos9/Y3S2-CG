@@ -157,4 +157,9 @@ export class MyBuilding extends CGFobject {
 
     
     }
+
+         getCentralHeight() {
+            return this.centralHeight;
+
+        }
 }
