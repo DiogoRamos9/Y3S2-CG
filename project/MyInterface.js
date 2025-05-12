@@ -26,6 +26,7 @@ export class MyInterface extends CGFinterface {
         this.gui.add(this.scene, 'displayTree').name('Display Tree');
         this.gui.add(this.scene, 'displayForest').name('Display Forest');
         this.gui.add(this.scene, 'displayHeli').name('Display Helicopter');
+        this.gui.add(this.scene, 'speedFactor', 0.1, 3.0).name('Speed Factor');
 
         const BuildingFolder = this.gui.addFolder('Building Parameters');
         BuildingFolder.add(this.scene, 'buildingwidth', 1.0, 200.0).name('Building Width');

@@ -7,8 +7,25 @@
     import { MyRoundedSquare } from './MyRoundedSquare.js';
 
     export class MyHeli extends CGFobject {
-        constructor(scene) {
+        constructor(scene, x = 0, y = 0, z = 0, orientation = 0, velocity = 0) {
             super(scene);
+
+            this.x = x;
+            this.y = y;
+            this.z = z;
+            this.position = {x: x, y: y, z: z};
+            this.landingPos = {x: x, y: y, z: z};
+            this.orientation = orientation;
+            this.velocity = velocity;
+            this.cruiseAltitude = this.y + 3;
+            this.isflying = false;
+            this.bucketdeployed = false;
+            this.inclination = 0;
+
+            this.bladespeed = 0;
+            this.takingOff = false;
+            this.landing = false;
+
 
             // Componentes do helicóptero
             this.body = new MySphere(scene, false, 20, 20); // Cabeça/cabine
@@ -62,6 +79,93 @@
             this.windowMaterial.setDiffuse(0.8, 0.8, 0.8, 1.0);
             this.windowMaterial.setSpecular(0.5, 0.5, 0.5, 1.0);
             this.windowMaterial.setShininess(10.0);
+        }
+
+        update(deltaTime, speedFactor){
+
+            if(this.takingOff){
+                this.position.y += 0.2 * deltaTime * speedFactor;
+                console.log(this.position.y);
+                this.bladespeed = Math.min(this.bladespeed + 0.1, 1);
+                if(this.position.y >= this.cruiseAltitude){
+                    this.position.y = this.cruiseAltitude;
+                    this.takingOff = false;
+                    this.isflying = true;
+                    this.bucketdeployed = true;
+                }
+
+            }
+
+            else if(this.landing){
+                this.position.y -= 0.1 * deltaTime * speedFactor;
+                console.log(this.position.y);
+                this.bladespeed = Math.max(this.bladespeed - 0.001, 0);
+                
+
+                if(this.position.y <= this.landingPos.y){
+                    this.position.y = this.landingPos.y;
+                    this.landing = false;
+                    this.isflying = false;
+                    this.bucketdeployed = false;
+                    this.velocity = 0;
+                }
+            }
+
+            else if(this.isflying){
+                this.position.x += this.velocity * Math.sin(this.orientation) * speedFactor * deltaTime / 1000;
+                this.position.z += this.velocity * Math.cos(this.orientation) * speedFactor * deltaTime / 1000;
+
+                this.position.y = this.cruiseAltitude;
+
+                 if (this.inclination > 0) {
+                    this.inclination = Math.max(this.inclination - 0.005, 0); // Reduz a inclinação para frente
+                } else if (this.inclination < 0) {
+                    this.inclination = Math.min(this.inclination + 0.005, 0); // Reduz a inclinação para trás
+                }
+            }
+
+        }
+
+        turn(angle){
+            this.orientation += angle*this.scene.speedFactor;
+        }
+
+        accelerate(value){
+            if(this.isflying){
+            this.velocity = Math.max(this.velocity + value, 0);
+            
+            if(value > 0){
+                this.inclination = Math.min(this.inclination + 0.009, Math.PI / 12);
+            }
+            else if(value < 0 && this.velocity > 0){
+                this.inclination = Math.max(this.inclination - 0.009, -Math.PI / 12);
+            }
+           
+        }
+        }
+
+        takeOff(){
+            if(!this.isflying && !this.takingOff){
+                this.takingOff = true;  
+                this.bladespeed = 0.2;
+            }
+        }
+
+        land(){
+            if(this.isflying && !this.landing){
+                this.landing = true;
+                
+            }
+        }
+
+        reset(){
+            this.isflying = false;
+            this.position.x = this.landingPos.x;
+            this.position.z = this.landingPos.z;
+            this.position.y = this.landingPos.y;
+            this.orientation = 0;
+            this.velocity = 0;
+            this.bucketdeployed = false;
         }
 
         display() {
@@ -209,6 +313,7 @@
             // Pá 1 (diagonal trás-direita)
             this.scene.pushMatrix();
             this.scene.translate(0, 0.53, 0);
+            this.scene.rotate(this.bladespeed * Date.now() * 0.02, 0, 1, 0);
             this.scene.rotate(Math.PI / 4, 0, 1, 0);
             this.scene.rotate(- Math.PI / 2, 1, 0, 0);
             this.scene.translate(bladeLength / 2, 0, 0);
@@ -219,6 +324,7 @@
             
             this.scene.pushMatrix();
             this.scene.translate(0, 0.53, 0);
+            this.scene.rotate(this.bladespeed * Date.now() * 0.02, 0, 1, 0);
             this.scene.rotate(Math.PI / 4, 0, 1, 0);
             this.scene.rotate(Math.PI / 2, 1, 0, 0);
             this.scene.translate(bladeLength / 2, 0, 0);
@@ -230,6 +336,7 @@
             // Pá 2 (diagonal frente-direita)
             this.scene.pushMatrix();
             this.scene.translate(0, 0.53, 0);
+            this.scene.rotate(this.bladespeed * Date.now() * 0.02, 0, 1, 0);
             this.scene.rotate(-Math.PI / 4, 0, 1, 0);
             this.scene.rotate(- Math.PI / 2, 1, 0, 0);
             this.scene.translate(bladeLength / 2, 0, 0);
@@ -240,6 +347,7 @@
 
             this.scene.pushMatrix();
             this.scene.translate(0, 0.53, 0);
+            this.scene.rotate(this.bladespeed * Date.now() * 0.02, 0, 1, 0);
             this.scene.rotate(-Math.PI / 4, 0, 1, 0);
             this.scene.rotate( Math.PI / 2, 1, 0, 0);
             this.scene.translate(bladeLength / 2, 0, 0);
@@ -251,6 +359,7 @@
             // Pá 3 (diagonal trás-esquerda)
             this.scene.pushMatrix();
             this.scene.translate(0, 0.53, 0);
+            this.scene.rotate(this.bladespeed * Date.now() * 0.02, 0, 1, 0);
             this.scene.rotate((3 * Math.PI) / 4, 0, 1, 0);
             this.scene.rotate(- Math.PI / 2, 1, 0, 0);
             this.scene.translate(bladeLength / 2, 0, 0);
@@ -261,6 +370,7 @@
 
             this.scene.pushMatrix();
             this.scene.translate(0, 0.53, 0);
+            this.scene.rotate(this.bladespeed * Date.now() * 0.02, 0, 1, 0);
             this.scene.rotate((3 * Math.PI) / 4, 0, 1, 0);
             this.scene.rotate( Math.PI / 2, 1, 0, 0);
             this.scene.translate(bladeLength / 2, 0, 0);
@@ -272,6 +382,7 @@
             // Pá 4 (diagonal frente-esquerda)
             this.scene.pushMatrix();
             this.scene.translate(0, 0.53, 0);
+            this.scene.rotate(this.bladespeed * Date.now() * 0.02, 0, 1, 0);
             this.scene.rotate(-(3 * Math.PI) / 4, 0, 1, 0);
             this.scene.rotate(- Math.PI / 2, 1, 0, 0);
             this.scene.translate(bladeLength / 2, 0, 0);
@@ -282,6 +393,7 @@
 
             this.scene.pushMatrix();
             this.scene.translate(0, 0.53, 0);
+            this.scene.rotate(this.bladespeed * Date.now() * 0.02, 0, 1, 0);
             this.scene.rotate(-(3 * Math.PI) / 4, 0, 1, 0);
             this.scene.rotate( Math.PI / 2, 1, 0, 0);
             this.scene.translate(bladeLength / 2, 0, 0);
@@ -386,10 +498,13 @@
 
 
             // Balde de água
+            if(this.bucketdeployed){
             this.scene.pushMatrix();
             this.scene.translate(0, -0.7, 0);     
             this.scene.scale(0.5, 0.5, 0.5);
+            this.tremMaterial.apply();
             this.bucket.display();
             this.scene.popMatrix();
+            }
         }
     }

@@ -29,6 +29,7 @@ export class MyScene extends CGFscene {
     this.numfloors = 4;
     this.numwindows = 2;
 
+    this.speedFactor = 1;
   }
 
   init(application) {
@@ -91,8 +92,7 @@ export class MyScene extends CGFscene {
         this.treeTopColor.map(c => c / 255) // Convert RGB to [0, 1] range
     );
     this.forest = new MyForest(this, 5, 4, 20, 15);
-    this.heli = new MyHeli(this);
-
+    this.heli = new MyHeli(this, 0, this.building.getCentralHeight() + 3, 0, 0, 0);
     this.displayAxis = true;
     this.displayPlane = false;
     this.displaySphere = false;
@@ -103,6 +103,9 @@ export class MyScene extends CGFscene {
     this.displayTree = false;
     this.displayForest = false;
     this.displayHeli = false;
+
+    this.setUpdatePeriod(20);
+    this.startime = Date.now();
 
 
     this.earthTexture = new CGFtexture(this, "texture/earth.jpg");
@@ -133,7 +136,7 @@ export class MyScene extends CGFscene {
       vec3.fromValues(0, 0, 0)
     );
   }
-  checkKeys() {
+  checkKeys(value) {
     var text = "Keys pressed: ";
     var keysPressed = false;
 
@@ -141,18 +144,69 @@ export class MyScene extends CGFscene {
     if (this.gui.isKeyPressed("KeyW")) {
       text += " W ";
       keysPressed = true;
+      this.heli.accelerate(value*10);
     }
 
     if (this.gui.isKeyPressed("KeyS")) {
       text += " S ";
       keysPressed = true;
+      this.heli.accelerate(-value*20);
     }
+
+    if (this.gui.isKeyPressed("KeyA")) {
+      text += " A ";
+      keysPressed = true;
+      this.heli.turn(value*10);
+    }
+
+    if (this.gui.isKeyPressed("KeyD")) {
+      text += " D ";
+      keysPressed = true;
+      this.heli.turn(-value*10);
+    }
+
+    if (this.gui.isKeyPressed("KeyR")){
+      text += " R ";
+      keysPressed = true;
+      this.heli.reset();
+    }
+
+    if (this.gui.isKeyPressed("KeyP")){
+      text += " P ";
+      keysPressed = true;
+      this.heli.takeOff();
+    }
+
+    if (this.gui.isKeyPressed("KeyL")) {
+      text += " L ";
+      keysPressed = true;
+      this.heli.land();
+    }
+
     if (keysPressed)
       console.log(text);
   }
 
   update(t) {
-    this.checkKeys();
+    const newBuildingHeight = this.building.getCentralHeight() + 3;
+
+    if (this.heli.position.y !== newBuildingHeight && !this.heli.isflying && !this.heli.landing) {
+        this.heli.position.y = newBuildingHeight;
+    }
+
+    if (this.heli.cruiseAltitude !== newBuildingHeight) {
+        this.heli.cruiseAltitude = newBuildingHeight + 6;
+
+        
+        if (this.heli.isflying) {
+            this.heli.position.y = this.heli.cruiseAltitude;
+        }
+    }
+
+
+    let time = (t - this.startime) / 1000.0;
+    this.heli.update(time, this.speedFactor);
+    this.checkKeys(this.speedFactor/200);
   }
 
   setDefaultAppearance() {
@@ -253,8 +307,9 @@ export class MyScene extends CGFscene {
 
     if (this.displayHeli) {
       this.pushMatrix();
-      const buildingHeight = this.building.getCentralHeight();
-      this.translate(0, buildingHeight + 3, 0);
+      this.translate(this.heli.position.x, this.heli.position.y , this.heli.position.z);
+      this.rotate(this.heli.orientation, 0, 1, 0);
+      this.rotate(this.heli.inclination, 1, 0, 0);
       this.scale(7 , 6 , 6); 
       this.heli.display();
       this.popMatrix();
