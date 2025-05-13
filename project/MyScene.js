@@ -190,15 +190,22 @@ export class MyScene extends CGFscene {
   update(t) {
     const newBuildingHeight = this.building.getCentralHeight() + 3;
 
-    if (this.heli.position.y !== newBuildingHeight && !this.heli.isflying && !this.heli.landing) {
-        this.heli.position.y = newBuildingHeight;
+
+    if(this.heli.landingPos.y !== newBuildingHeight) {
+      this.heli.landingPos.y = newBuildingHeight;
     }
 
-    if (this.heli.cruiseAltitude !== newBuildingHeight) {
-        this.heli.cruiseAltitude = newBuildingHeight + 6;
+    if (!this.heli.isflying && !this.heli.landing) {
+      if(this.heli.position.y !== newBuildingHeight) {
+        this.heli.position.y = newBuildingHeight;
+      }
+    }
+
+    if (this.heli.cruiseAltitude !== newBuildingHeight + 3) {
+        this.heli.cruiseAltitude = newBuildingHeight + 3;
 
         
-        if (this.heli.isflying) {
+        if (this.heli.isflying && !this.heli.landing) {
             this.heli.position.y = this.heli.cruiseAltitude;
         }
     }

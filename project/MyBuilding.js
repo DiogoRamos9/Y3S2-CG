@@ -17,7 +17,7 @@ export class MyBuilding extends CGFobject {
         this.centralWidth = totalWidth / 2; // Central module width
         this.lateralWidth = this.centralWidth * 0.75; // Lateral module width (75% of central)
         this.centralHeight = numFloors * 5; // Height of the central module
-        this.lateralHeight = this.centralHeight * 0.75; // Height of the lateral modules (75% of central)
+        this.lateralHeight = Math.round((this.centralHeight * 0.75) / 5) * 5; // Height of the lateral modules (75% of central)
 
         this.door = new MyDoor(scene, doorTexture, signTexture); // Door and sign
         this.window = new MyWindow(scene, windowTexture); // Window

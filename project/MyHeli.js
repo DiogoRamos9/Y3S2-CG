@@ -17,7 +17,7 @@
             this.landingPos = {x: x, y: y, z: z};
             this.orientation = orientation;
             this.velocity = velocity;
-            this.cruiseAltitude = this.y + 3;
+            this.cruiseAltitude = this.landingPos.y + 3;
             this.isflying = false;
             this.bucketdeployed = false;
             this.inclination = 0;
@@ -84,7 +84,9 @@
         update(deltaTime, speedFactor){
 
             if(this.takingOff){
-                this.position.y += 0.2 * deltaTime * speedFactor;
+                const elapsedTime = (Date.now() - this.startTime) / 1000; // Tempo em segundos
+                this.position.y = Math.min(this.landingPos.y + elapsedTime * 0.5, this.cruiseAltitude); // Incremento baseado no tempo absoluto
+   
                 console.log(this.position.y);
                 this.bladespeed = Math.min(this.bladespeed + 0.1, 1);
                 if(this.position.y >= this.cruiseAltitude){
@@ -97,9 +99,11 @@
             }
 
             else if(this.landing){
-                this.position.y -= 0.1 * deltaTime * speedFactor;
+                const elapsedTime = (Date.now() - this.startTime) / 1000; // Tempo em segundos
+                this.position.y = Math.max(this.cruiseAltitude - elapsedTime * 0.5, this.landingPos.y); // Incremento baseado no tempo absoluto
+   
                 console.log(this.position.y);
-                this.bladespeed = Math.max(this.bladespeed - 0.001, 0);
+                this.bladespeed = Math.max(this.bladespeed - 0.005, 0);
                 
 
                 if(this.position.y <= this.landingPos.y){
@@ -108,6 +112,8 @@
                     this.isflying = false;
                     this.bucketdeployed = false;
                     this.velocity = 0;
+                    this.bladespeed = 0;
+                    this.inclination = 0;
                 }
             }
 
@@ -148,13 +154,15 @@
             if(!this.isflying && !this.takingOff){
                 this.takingOff = true;  
                 this.bladespeed = 0.2;
+                this.startTime = Date.now();
             }
         }
 
         land(){
             if(this.isflying && !this.landing){
                 this.landing = true;
-                
+                this.startTime = Date.now();
+                this.inclination = 0;
             }
         }
 
@@ -165,7 +173,11 @@
             this.position.y = this.landingPos.y;
             this.orientation = 0;
             this.velocity = 0;
+            this.bladespeed = 0;
             this.bucketdeployed = false;
+            this.takingOff = false;
+            this.landing = false;
+            this.inclination = 0;
         }
 
         display() {
