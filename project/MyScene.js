@@ -9,6 +9,8 @@ import { MyCircle } from "./MyCircle.js";
 import { MyTree } from "./MyTree.js";
 import { MyForest } from "./MyForest.js";
 import { MyHeli } from "./MyHeli.js";
+import { MyLake } from "./MyLake.js";
+import { MyFire } from "./MyFire.js";
 
 /**
  * MyScene
@@ -93,6 +95,10 @@ export class MyScene extends CGFscene {
     );
     this.forest = new MyForest(this, 5, 4, 20, 15);
     this.heli = new MyHeli(this, 0, this.building.getCentralHeight() + 3, 0, 0, 0);
+    this.lake = new MyLake(this);
+    this.fire = new MyFire(this);
+
+
     this.displayAxis = true;
     this.displayPlane = false;
     this.displaySphere = false;
@@ -103,6 +109,8 @@ export class MyScene extends CGFscene {
     this.displayTree = false;
     this.displayForest = false;
     this.displayHeli = false;
+    this.displayFire = false;
+    this.displayLake = false;
 
     this.setUpdatePeriod(20);
     this.startime = Date.now();
@@ -321,6 +329,23 @@ export class MyScene extends CGFscene {
       this.heli.display();
       this.popMatrix();
 
+    }
+
+    if (this.displayFire) {
+      this.pushMatrix();
+      this.translate(10, 0, 32);
+      this.scale(2, 2, 2);
+      this.fire.display();
+      this.popMatrix();
+    }
+
+    if (this.displayLake) {
+      this.pushMatrix();
+      this.translate(-20, 0.1, 30);
+      this.rotate(Math.PI/2, 1, 0 ,0) // Ajustar a escala do lago
+      this.scale(2, 2, 2);
+      this.lake.display();
+      this.popMatrix();
     }
 
     // ---- END Background, camera and axis setup
