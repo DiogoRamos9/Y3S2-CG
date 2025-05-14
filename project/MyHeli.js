@@ -25,6 +25,8 @@
             this.bladespeed = 0;
             this.takingOff = false;
             this.landing = false;
+            this.isOverLake = false;
+            this.bucketfull = false;
 
 
             // Componentes do helicóptero
@@ -42,6 +44,15 @@
 
 
             // Materiais 
+
+            this.waterTexture = new CGFtexture(scene, 'texture/water.jpg');
+            this.waterMaterial = new CGFappearance(scene);
+            this.waterMaterial.setTexture(this.waterTexture);
+            this.waterMaterial.setTextureWrap('REPEAT', 'REPEAT');
+            this.waterMaterial.setAmbient(0.6, 0.6, 0.6, 1.0);
+            this.waterMaterial.setDiffuse(0.8, 0.8, 0.8, 1.0);
+            this.waterMaterial.setSpecular(0.5, 0.5, 0.5, 1.0);
+            this.waterMaterial.setShininess(10.0);
             
             this.helicetexture = new CGFtexture(scene, 'texture/helice.jpg');
             this.heliceMaterial = new CGFappearance(scene);
@@ -85,9 +96,14 @@
 
             if(this.takingOff){
                 const elapsedTime = (Date.now() - this.startTime) / 1000; // Tempo em segundos
-                this.position.y = Math.min(this.landingPos.y + elapsedTime * 0.5, this.cruiseAltitude); // Incremento baseado no tempo absoluto
-   
-                console.log(this.position.y);
+                if (this.isOverLake) {
+                    
+                    this.position.y = Math.min(this.startlake + elapsedTime * 0.8, this.cruiseAltitude); 
+                } else {
+                    
+                    this.position.y = Math.min(this.landingPos.y + elapsedTime * 0.5, this.cruiseAltitude);
+                }
+                
                 this.bladespeed = Math.min(this.bladespeed + 0.1, 1);
                 if(this.position.y >= this.cruiseAltitude){
                     this.position.y = this.cruiseAltitude;
@@ -99,21 +115,48 @@
             }
 
             else if(this.landing){
-                const elapsedTime = (Date.now() - this.startTime) / 1000; // Tempo em segundos
-                this.position.y = Math.max(this.cruiseAltitude - elapsedTime * 0.5, this.landingPos.y); // Incremento baseado no tempo absoluto
-   
-                console.log(this.position.y);
-                this.bladespeed = Math.max(this.bladespeed - 0.005, 0);
-                
+                const elapsedTime = (Date.now() - this.startTime) / 1000; 
+               
+                if(this.isOverLake){
+                    const bucketHeight = this.position.y - 3.8; 
+                    const lakeHeight = 0.1;
 
-                if(this.position.y <= this.landingPos.y){
-                    this.position.y = this.landingPos.y;
-                    this.landing = false;
-                    this.isflying = false;
-                    this.bucketdeployed = false;
-                    this.velocity = 0;
-                    this.bladespeed = 0;
-                    this.inclination = 0;
+                    if(bucketHeight > lakeHeight+0.001){
+                        this.position.y = Math.max(this.cruiseAltitude - elapsedTime * 0.8, lakeHeight + 3.8); // Incremento baseado no tempo absoluto
+                        
+                    }
+                    else{
+                        this.landing = false;
+                        this.isflying = false;
+                        this.bucketdeployed = true;
+                        this.bucketfull = true;
+                        this.velocity = 0;
+                        this.inclination = 0;
+                        
+                    }
+
+                }
+                else {
+                    const progress = Math.max(this.cruiseAltitude - elapsedTime * 0.5, this.landingPos.y) / this.cruiseAltitude;
+
+                    this.position.y = Math.max(this.cruiseAltitude - elapsedTime * 0.5, this.landingPos.y); // Incremento baseado no tempo absoluto
+                    this.position.x = this.landingPos.x + (this.position.x - this.landingPos.x) * progress;
+                    this.position.z = this.landingPos.z + (this.position.z - this.landingPos.z) * progress;
+
+                
+                    this.bladespeed = Math.max(this.bladespeed - 0.005, 0);
+
+                    if (this.position.y <= this.landingPos.y && Math.abs(this.position.x - this.landingPos.x) < 0.01 && Math.abs(this.position.z - this.landingPos.z) < 0.01) {
+                        this.position.y = this.landingPos.y;
+                        this.position.x = this.landingPos.x;
+                        this.position.z = this.landingPos.z;
+                        this.landing = false;
+                        this.isflying = false;
+                        this.bucketdeployed = false;
+                        this.velocity = 0;
+                        this.bladespeed = 0;
+                        this.inclination = 0;
+                    }
                 }
             }
 
@@ -122,7 +165,7 @@
                 this.position.z += this.velocity * Math.cos(this.orientation) * speedFactor * deltaTime / 1000;
 
                 this.position.y = this.cruiseAltitude;
-
+                
                  if (this.inclination > 0) {
                     this.inclination = Math.max(this.inclination - 0.005, 0); // Reduz a inclinação para frente
                 } else if (this.inclination < 0) {
@@ -151,18 +194,35 @@
         }
 
         takeOff(){
-            if(!this.isflying && !this.takingOff){
+            if((!this.isflying && !this.takingOff )|| (this.isOverLake)){
                 this.takingOff = true;  
                 this.bladespeed = 0.2;
                 this.startTime = Date.now();
+                this.startlake = this.position.y;
             }
         }
 
         land(){
             if(this.isflying && !this.landing){
-                this.landing = true;
-                this.startTime = Date.now();
-                this.inclination = 0;
+
+                const lakeCenterX = -50; // Coordenada X do centro do lago
+                const lakeCenterZ = 50; // Coordenada Z do centro do lago
+                const lakeRadius = 24;
+
+                const distanceToLakeCenter = Math.sqrt(Math.pow(this.position.x - lakeCenterX, 2) + Math.pow(this.position.z - lakeCenterZ, 2));
+
+                if(distanceToLakeCenter <= lakeRadius){
+                    this.landing = true;
+                    this.startTime = Date.now();
+                    this.inclination = 0;
+                    this.isOverLake = true;
+                }
+                else{
+                    this.landing = true;
+                    this.startTime = Date.now();
+                    this.inclination = 0;
+                    this.isOverLake = false;
+                }
             }
         }
 
@@ -178,6 +238,7 @@
             this.takingOff = false;
             this.landing = false;
             this.inclination = 0;
+            this.bucketfull = false;
         }
 
         display() {
@@ -512,9 +573,20 @@
             // Balde de água
             if(this.bucketdeployed){
             this.scene.pushMatrix();
-            this.scene.translate(0, -0.7, 0);     
+            
+            if(this.bucketfull){ 
+                this.scene.rotate(Math.PI, 1, 0, 0);
+                this.scene.translate(0, 0.48, 0);
+                this.waterMaterial.apply();
+               
+            }
+            else{
+                this.scene.translate(0, -0.7, 0);     
+                this.tremMaterial.apply();
+            
+            }
+
             this.scene.scale(0.5, 0.5, 0.5);
-            this.tremMaterial.apply();
             this.bucket.display();
             this.scene.popMatrix();
             }

@@ -149,25 +149,25 @@ export class MyScene extends CGFscene {
     var keysPressed = false;
 
     // Check for key codes e.g. in https://keycode.info/
-    if (this.gui.isKeyPressed("KeyW")) {
+    if (this.gui.isKeyPressed("KeyW") || this.gui.isKeyPressed("ArrowUp")) {
       text += " W ";
       keysPressed = true;
       this.heli.accelerate(value*10);
     }
 
-    if (this.gui.isKeyPressed("KeyS")) {
+    if (this.gui.isKeyPressed("KeyS") || this.gui.isKeyPressed("ArrowDown")) {
       text += " S ";
       keysPressed = true;
       this.heli.accelerate(-value*20);
     }
 
-    if (this.gui.isKeyPressed("KeyA")) {
+    if (this.gui.isKeyPressed("KeyA") || this.gui.isKeyPressed("ArrowLeft")) {
       text += " A ";
       keysPressed = true;
       this.heli.turn(value*10);
     }
 
-    if (this.gui.isKeyPressed("KeyD")) {
+    if (this.gui.isKeyPressed("KeyD") || this.gui.isKeyPressed("ArrowRight")) {
       text += " D ";
       keysPressed = true;
       this.heli.turn(-value*10);
@@ -203,7 +203,7 @@ export class MyScene extends CGFscene {
       this.heli.landingPos.y = newBuildingHeight;
     }
 
-    if (!this.heli.isflying && !this.heli.landing) {
+    if (!this.heli.isflying && !this.heli.landing && !this.heli.isOverLake) {
       if(this.heli.position.y !== newBuildingHeight) {
         this.heli.position.y = newBuildingHeight;
       }
@@ -341,9 +341,9 @@ export class MyScene extends CGFscene {
 
     if (this.displayLake) {
       this.pushMatrix();
-      this.translate(-20, 0.1, 30);
+      this.translate(-50, 0.02, 50);
       this.rotate(Math.PI/2, 1, 0 ,0) // Ajustar a escala do lago
-      this.scale(2, 2, 2);
+      this.scale(5, 5, 5 );
       this.lake.display();
       this.popMatrix();
     }
