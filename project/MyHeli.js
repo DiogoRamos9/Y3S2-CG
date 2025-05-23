@@ -64,7 +64,7 @@
             this.heliceMaterial.setShininess(50.0);
 
 
-            this.tremtexture = new CGFtexture(scene, 'texture/metal.jng');
+            this.tremtexture = new CGFtexture(scene, 'texture/metal.jpg');
             this.tremMaterial = new CGFappearance(scene);
             this.tremMaterial.setTexture(this.tremtexture);
             this.tremMaterial.setTextureWrap('REPEAT', 'REPEAT');
@@ -93,6 +93,7 @@
         }
 
         update(deltaTime, speedFactor){
+            
 
             if(this.takingOff){
                 const elapsedTime = (Date.now() - this.startTime) / 1000; // Tempo em segundos
@@ -156,6 +157,7 @@
                         this.velocity = 0;
                         this.bladespeed = 0;
                         this.inclination = 0;
+                        this.bucketfull = false;
                     }
                 }
             }
@@ -204,6 +206,7 @@
 
         land(){
             if(this.isflying && !this.landing){
+                
 
                 const lakeCenterX = -50; // Coordenada X do centro do lago
                 const lakeCenterZ = 50; // Coordenada Z do centro do lago
@@ -216,6 +219,7 @@
                     this.startTime = Date.now();
                     this.inclination = 0;
                     this.isOverLake = true;
+                    this.velocity = 0;
                 }
                 else{
                     this.landing = true;

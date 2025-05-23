@@ -37,10 +37,10 @@ export class MyInterface extends CGFinterface {
         
         // Add controls for MyTree parameters
         const treeFolder = this.gui.addFolder('Tree Parameters');
-        treeFolder.add(this.scene, 'treeInclination', 0, Math.PI / 2).name('Inclination (rad)');
+        treeFolder.add(this.scene, 'treeInclination', -1.5, Math.PI / 2).name('Inclination (rad)');
         treeFolder.add(this.scene, 'xInclination').name('Inclination Axis');
         treeFolder.add(this.scene, 'trunkRadius', 0.1, 2.0).name('Trunk Radius');
-        treeFolder.add(this.scene, 'treeHeight', 1.0, 10.0).name('Tree Height');
+        treeFolder.add(this.scene, 'treeHeight', 1.0, 6.0).name('Tree Height');
         treeFolder.addColor(this.scene, 'treeTopColor').name('Tree Top Color');
     
         this.initKeys();

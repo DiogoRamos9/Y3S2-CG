@@ -27,15 +27,21 @@ export class MyScene extends CGFscene {
     this.treeHeight = 5; // Height of the tree
     this.treeTopColor = [51, 204, 51]; // Default green color in RGB
 
-    this.buildingwidth = 30;
-    this.numfloors = 4;
-    this.numwindows = 2;
+    this.buildingwidth = 30; // Width of the building
+    this.numfloors = 4; // Number of floors
+    this.numwindows = 2; // Number of windows per floor
 
     this.speedFactor = 1;
+
+    this.focusheli = false; // Flag to check if the camera should focus on the helicopter
+    this.defaultCamera = null; 
+    this.heliCamera = null;
   }
 
   init(application) {
     super.init(application);
+
+    this.setGlobalAmbientLight(1.0, 1.0, 1.0, 1.0);
 
     this.initCameras();
     this.initLights();
@@ -84,7 +90,7 @@ export class MyScene extends CGFscene {
     this.currentBuildingWidth = this.buildingwidth;
     this.currentNumFloors = this.numfloors;
     this.currentNumWindows = this.numwindows;
-    this.building = new MyBuilding(this, this.buildingwidth , this.numfloors, this.numwindows, this.windowTexture, [0.8, 0.8, 0.8], this.doorTexture, this.placarTexture);
+    this.building = new MyBuilding(this, this.buildingwidth , this.numfloors, this.numwindows, this.windowTexture, [0.6, 0.6, 0.6], this.doorTexture, this.placarTexture);
     this.tree = new MyTree(
         this,
         this.treeInclination,
@@ -111,6 +117,7 @@ export class MyScene extends CGFscene {
     this.displayHeli = false;
     this.displayFire = false;
     this.displayLake = false;
+    
 
     this.setUpdatePeriod(20);
     this.startime = Date.now();
@@ -143,6 +150,7 @@ export class MyScene extends CGFscene {
       vec3.fromValues(20, 20, 20),
       vec3.fromValues(0, 0, 0)
     );
+    this.defaultCamera = this.camera;
   }
   checkKeys(value) {
     var text = "Keys pressed: ";
@@ -191,6 +199,29 @@ export class MyScene extends CGFscene {
       this.heli.land();
     }
 
+    if (this.gui.isKeyPressed("KeyF")) {
+    text += " F ";
+    keysPressed = true;
+    this.focusheli = true;
+    if (this.heliCamera === null) { 
+        this.heliCamera = new CGFcamera(
+            1.9,
+            1.0,
+            1000,
+            vec3.fromValues(0, 0, 0), 
+            vec3.fromValues(0, 0, 0)
+        );
+    }
+    this.camera = this.heliCamera;
+}
+
+    if (this.gui.isKeyPressed("KeyC")) {
+      text += " C ";
+      keysPressed = true;
+      this.focusheli = false;
+      this.camera = this.defaultCamera;
+    }
+
     if (keysPressed)
       console.log(text);
   }
@@ -218,6 +249,28 @@ export class MyScene extends CGFscene {
         }
     }
 
+    if (this.focusheli && this.heliCamera !== null) {
+    // Distância atrás e acima do helicóptero
+    const dist = 3;
+    const altura = 8;
+
+    // Calcula a posição atrás do helicóptero com base na orientação
+    const camX = this.heli.position.x - dist * Math.sin(this.heli.orientation);
+    const camY = this.heli.position.y + altura;
+    const camZ = this.heli.position.z - dist * Math.cos(this.heli.orientation);
+
+    this.heliCamera.setPosition(
+        vec3.fromValues(camX, camY, camZ)
+    );
+    this.heliCamera.setTarget(
+        vec3.fromValues(
+            this.heli.position.x,
+            this.heli.position.y,
+            this.heli.position.z
+        )
+    );
+}
+    
 
     let time = (t - this.startime) / 1000.0;
     this.heli.update(time, this.speedFactor);

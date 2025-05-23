@@ -26,8 +26,9 @@ export class MyBuilding extends CGFobject {
 
         this.wallMaterial = new CGFappearance(scene);
         this.wallMaterial.setAmbient(this.buildingColor[0], this.buildingColor[1], this.buildingColor[2], 1.0);
-        this.wallMaterial.setDiffuse(this.buildingColor[0], this.buildingColor[1], this.buildingColor[2], 1.0);
-        this.wallMaterial.setSpecular(0.1, 0.1, 0.1, 1.0);
+        this.wallMaterial.setDiffuse(0.0, 0.0, 0.0, 1.0);   // Sem difuso
+        this.wallMaterial.setSpecular(0.0, 0.0, 0.0, 1.0);  // Sem especular
+        this.wallMaterial.setShininess(1.0); 
 
         this.heliTexture = new CGFtexture(scene, 'texture/heliporto.png');
         this.helicopterMaterial = new CGFappearance(scene);
