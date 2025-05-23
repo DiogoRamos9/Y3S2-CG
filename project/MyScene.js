@@ -99,7 +99,7 @@ export class MyScene extends CGFscene {
         this.treeHeight,
         this.treeTopColor.map(c => c / 255) // Convert RGB to [0, 1] range
     );
-    this.forest = new MyForest(this, 5, 4, 20, 15);
+    this.forest = new MyForest(this, 5, 4, 22, 22);
     this.heli = new MyHeli(this, 0, this.building.getCentralHeight() + 3, 0, 0, 0);
     this.lake = new MyLake(this);
     this.fire = new MyFire(this);
@@ -368,7 +368,7 @@ export class MyScene extends CGFscene {
     
     if (this.displayForest) {
       this.pushMatrix();
-      this.translate(20, 0, 23);
+      this.translate(20, 0, 25);
       this.forest.display();
       this.popMatrix();
     }
@@ -386,8 +386,8 @@ export class MyScene extends CGFscene {
 
     if (this.displayFire) {
       this.pushMatrix();
-      this.translate(10, 0, 32);
-      this.scale(2, 2, 2);
+      this.translate(16, 0, 22);
+      this.scale(5, 3, 6);
       this.fire.display();
       this.popMatrix();
     }
@@ -403,8 +403,8 @@ export class MyScene extends CGFscene {
 
     // ---- END Background, camera and axis setup
 
-    // ---- BEGIN Primitive drawing section
-    // ---- END Primitive drawing section
+   
+    
     
 
   }
