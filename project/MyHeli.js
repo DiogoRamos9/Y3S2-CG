@@ -5,6 +5,7 @@
     import { MyCircle } from './MyCircle.js';
     import { MyPlane } from './MyPlane.js';
     import { MyRoundedSquare } from './MyRoundedSquare.js';
+    import { MyUnitCube } from './MyUnitCube.js';
 
     export class MyHeli extends CGFobject {
         constructor(scene, x = 0, y = 0, z = 0, orientation = 0, velocity = 0) {
@@ -26,7 +27,7 @@
             this.takingOff = false;
             this.landing = false;
             this.isOverLake = false;
-            this.bucketfull = false;
+            this.bucketfull = true;
 
 
             // Componentes do helicóptero
@@ -42,6 +43,10 @@
             this.window = new MyRoundedSquare(scene, 0.4, 0.08); // Janela
             this.cabin = new MySphere(scene, false, 30, 30, false); // Cabeça/cabine
 
+            // Water
+
+            this.waterDrops = [];
+            this.cube = new MyUnitCube(scene);
 
             // Materiais 
 
@@ -157,7 +162,6 @@
                         this.velocity = 0;
                         this.bladespeed = 0;
                         this.inclination = 0;
-                        this.bucketfull = false;
                     }
                 }
             }
@@ -173,6 +177,26 @@
                 } else if (this.inclination < 0) {
                     this.inclination = Math.min(this.inclination + 0.005, 0); // Reduz a inclinação para trás
                 }
+            }
+
+            if(this.waterDrops.length > 0){
+                const elapsedTime = (Date.now() - this.startTime) / 1000; 
+                for(let drop of this.waterDrops){
+                    drop.y += drop.speed * elapsedTime; 
+                }
+
+                const fireX=16, fireZ=22, fireRadius=10;
+                for(let drop of this.waterDrops){
+                    const distanceToFire = Math.sqrt(Math.pow(drop.x - fireX, 2) + Math.pow(drop.z - fireZ, 2));
+                    if(drop.y <= 0.5 && distanceToFire <= fireRadius){
+                        if(this.targetFire && this.targetFire.extinguished === false){
+                            this.targetFire.extinguished = true;
+                            this.scene.fireReignite = 10; 
+                        }
+                    }
+                }
+
+                this.waterDrops = this.waterDrops.filter(drop => drop.y > 0); 
             }
 
         }
@@ -243,6 +267,30 @@
             this.landing = false;
             this.inclination = 0;
             this.bucketfull = false;
+        }
+
+        dropwater(fire){
+
+            this.targetFire = fire;
+            const fireX = 16;
+            const fireZ = 22;
+            const fireRadius = 10;
+
+            const distanceToFire = Math.sqrt(Math.pow(this.position.x - fireX, 2) + Math.pow(this.position.z - fireZ, 2));
+
+            if(this.bucketdeployed && this.bucketfull && distanceToFire <= fireRadius){
+                this.startTime = Date.now();
+                 for (let i = 0; i < 10; i++) {
+                    this.waterDrops.push({
+                        x: this.position.x + (Math.random() - 0.5) * 2,
+                        y: this.position.y - 1,
+                        z: this.position.z + (Math.random() - 0.5) * 2,
+                        speed: -0.5 - Math.random() * 0.5
+                    });
+                }
+                this.bucketfull = false;
+                
+            }
         }
 
         display() {
@@ -317,7 +365,7 @@
             this.tailRotorBlade.display();
             this.scene.popMatrix();
 
-             this.scene.pushMatrix();
+            this.scene.pushMatrix();
             this.scene.translate(-0.20, 0, -1.18); 
             this.scene.rotate(Math.PI / 2, 0, 1, 0); 
             this.scene.scale(0.4, 0.03, 1);
@@ -593,6 +641,19 @@
             this.scene.scale(0.5, 0.5, 0.5);
             this.bucket.display();
             this.scene.popMatrix();
+            }
+
+            // Gotas de água
+            if(this.waterDrops.length > 0){
+            for(let drop of this.waterDrops){
+                this.scene.pushMatrix();
+                // Ajuste para o sistema de coordenadas local do helicóptero
+                this.scene.translate(drop.x - this.position.x, drop.y - this.position.y, drop.z - this.position.z);
+                this.scene.scale(0.2, 0.2, 0.2);
+                this.waterMaterial.apply();
+                this.cube.display();
+                this.scene.popMatrix();
+                }
             }
         }
     }

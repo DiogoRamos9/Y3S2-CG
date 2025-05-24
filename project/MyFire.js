@@ -18,9 +18,15 @@ export class MyFire extends CGFobject {
 
         this.cube = new MyUnitCube(scene);
         this.pyramid = new MyPyramid(scene, 8, 20 );
+        this.extinguished = false;
     }
 
     display() {
+
+        if(this.extinguished){
+            return;
+        }
+
         this.fireMaterial.apply();
 
         // Desenha a pirâmide central

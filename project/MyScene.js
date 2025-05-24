@@ -117,6 +117,7 @@ export class MyScene extends CGFscene {
     this.displayHeli = false;
     this.displayFire = false;
     this.displayLake = false;
+    this.fireReignite = 0;
     
 
     this.setUpdatePeriod(20);
@@ -222,12 +223,25 @@ export class MyScene extends CGFscene {
       this.camera = this.defaultCamera;
     }
 
+    if (this.gui.isKeyPressed("KeyO")){
+      text += " O ";
+      keysPressed = true;
+      const wasActive = !this.fire.extinguished;
+      this.heli.dropwater(this.fire);
+    }
+
     if (keysPressed)
       console.log(text);
   }
 
   update(t) {
     const newBuildingHeight = this.building.getCentralHeight() + 3;
+
+    if(this.lastupdatetime === undefined){
+      this.lastupdatetime = t;
+    }
+    let deltaTime = (t - this.lastupdatetime)/1000;
+    this.lastupdatetime = t;
 
 
     if(this.heli.landingPos.y !== newBuildingHeight) {
@@ -248,7 +262,7 @@ export class MyScene extends CGFscene {
             this.heli.position.y = this.heli.cruiseAltitude;
         }
     }
-
+    
     if (this.focusheli && this.heliCamera !== null) {
     // Distância atrás e acima do helicóptero
     const dist = 3;
@@ -269,6 +283,14 @@ export class MyScene extends CGFscene {
             this.heli.position.z
         )
     );
+  }
+
+  if(this.fire.extinguished && this.fireReignite > 0){
+    this.fireReignite -= deltaTime;
+    if(this.fireReignite <= 0){
+      this.fire.extinguished = false;
+      this.fireReignite = 0;
+    }
 }
     
 
