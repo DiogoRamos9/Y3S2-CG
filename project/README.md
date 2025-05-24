@@ -4,4 +4,8 @@
 
 ## Project Notes
 
-**- Extra:** Heli Camera. (F to activate and C to default)
+### Extras
+
+- Heli Camera. (F to activate and C to default)
+
+- Heli Sound.

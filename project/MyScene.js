@@ -188,7 +188,7 @@ export class MyScene extends CGFscene {
       this.heli.reset();
     }
 
-    if (this.gui.isKeyPressed("KeyP")){
+    if (this.gui.isKeyPressed("KeyP") && this.displayHeli){
       text += " P ";
       keysPressed = true;
       this.heli.takeOff();

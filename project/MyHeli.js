@@ -27,7 +27,11 @@
             this.takingOff = false;
             this.landing = false;
             this.isOverLake = false;
-            this.bucketfull = true;
+            this.bucketfull = false;
+
+            this.heliSound = new Audio('sounds/helisound.mp3');
+            this.heliSound.loop = true;
+            this.heliSound.volume = 0.5;
 
 
             // Componentes do helicóptero
@@ -197,6 +201,15 @@
                 }
 
                 this.waterDrops = this.waterDrops.filter(drop => drop.y > 0); 
+            }
+
+            if((this.isflying || this.takingOff) && this.heliSound.paused){
+                this.heliSound.play();
+            }
+
+            if(!this.isflying && !this.takingOff && !this.isOverLake && !this.heliSound.paused){
+                this.heliSound.pause();
+                this.heliSound.currentTime = 0;
             }
 
         }
