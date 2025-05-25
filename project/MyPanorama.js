@@ -2,7 +2,7 @@ import { CGFappearance, CGFobject } from '../lib/CGF.js';
 import { MySphere } from './MySphere.js';
 
 export class MyPanorama extends CGFobject {
-    constructor(scene, texture) {
+    constructor(scene, normalTexture) {
         super(scene);
         this.scene = scene;
 
@@ -12,7 +12,7 @@ export class MyPanorama extends CGFobject {
         
         this.material = new CGFappearance(scene);
         this.material.setEmission(1.0, 1.0, 1.0, 1.0); // Apenas emissiva
-        this.material.setTexture(texture); 
+        this.material.setTexture(normalTexture); 
         this.material.setTextureWrap('REPEAT', 'REPEAT');
     }
 

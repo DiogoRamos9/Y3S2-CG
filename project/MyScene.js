@@ -104,6 +104,8 @@ export class MyScene extends CGFscene {
     this.lake = new MyLake(this);
     this.fire = new MyFire(this);
 
+    this.fire.initShaders(this);
+
 
     this.displayAxis = true;
     this.displayPlane = false;
@@ -293,10 +295,14 @@ export class MyScene extends CGFscene {
     }
 }
     
-
+    
     let time = (t - this.startime) / 1000.0;
     this.heli.update(time, this.speedFactor);
     this.checkKeys(this.speedFactor/200);
+
+    if(this.fire.fireShader){
+      this.fire.fireShader.setUniformsValues({ uTime: time/5 });
+    }
   }
 
   setDefaultAppearance() {

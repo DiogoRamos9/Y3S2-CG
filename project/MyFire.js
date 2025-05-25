@@ -1,4 +1,4 @@
-import { CGFobject, CGFappearance, CGFtexture } from '../lib/CGF.js';
+import { CGFobject, CGFappearance, CGFtexture, CGFshader } from '../lib/CGF.js';
 import { MyUnitCube } from './MyUnitCube.js';
 import { MyPyramid } from './MyPyramid.js'; // importa a tua pirâmide
 
@@ -16,9 +16,16 @@ export class MyFire extends CGFobject {
         this.fireMaterial.setSpecular(0.2, 0.2, 0.2, 1.0);
         this.fireMaterial.setShininess(10.0);
 
+        this.fireShader = null;
+
         this.cube = new MyUnitCube(scene);
         this.pyramid = new MyPyramid(scene, 8, 20 );
         this.extinguished = false;
+    }
+
+    initShaders(scene){
+        this.fireShader = new CGFshader(scene.gl, 'shaders/fire.vert', 'shaders/fire.frag');
+        this.fireShader.setUniformsValues({ uTime: 0 });
     }
 
     display() {
@@ -27,6 +34,7 @@ export class MyFire extends CGFobject {
             return;
         }
 
+        this.scene.setActiveShader(this.fireShader);
         this.fireMaterial.apply();
 
         // Desenha a pirâmide central
@@ -63,5 +71,8 @@ export class MyFire extends CGFobject {
         this.scene.scale(0.4, 1, 0.4);
         this.cube.display();
         this.scene.popMatrix();
+
+        this.scene.setActiveShader(this.scene.defaultShader);
+
     }
 }
