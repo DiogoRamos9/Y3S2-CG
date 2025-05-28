@@ -60,6 +60,8 @@ export class MyScene extends CGFscene {
 
 
     this.panoramaTexture = new CGFtexture(this, "texture/panorama.jpg");
+    this.cloudsTexture = new CGFtexture(this, "texture/clouds.png");
+    
     this.panoramaappearance = new CGFappearance(this);
     this.panoramaappearance.setTexture(this.panoramaTexture);
     this.panoramaappearance.setTextureWrap("REPEAT", "REPEAT");
@@ -238,6 +240,10 @@ export class MyScene extends CGFscene {
 
   update(t) {
     const newBuildingHeight = this.building.getCentralHeight() + 3;
+
+    if (this.displayPanorama) {
+      this.panorama.update(t);
+    }
 
     if(this.lastupdatetime === undefined){
       this.lastupdatetime = t;
