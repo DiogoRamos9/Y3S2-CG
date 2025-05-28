@@ -165,7 +165,7 @@ export class MyBuilding extends CGFobject {
             }
 
             // Tamanho e posição das luzes de aviso
-            const lightSize = 0.15;
+            const lightSize = 0.4;
             const lightOffset = width * 0.6;  // Reduzindo um pouco a distância
 
             // Desenhar as quatro luzes nos cantos do heliporto
