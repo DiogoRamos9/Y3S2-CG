@@ -25,13 +25,13 @@
             this.bladespeed = 0;
             this.takingOff = false;
             this.landing = false;
+            this.manover = false;
             this.isOverLake = false;
             this.bucketfull = false;
 
             this.heliSound = new Audio('sounds/helisound.mp3');
             this.heliSound.loop = true;
             this.heliSound.volume = 0.5;
-
 
             // Componentes do helicóptero
             this.body = new MySphere(scene, false, 20, 20); // Cabeça/cabine
@@ -101,9 +101,7 @@
         }
 
         update(deltaTime, speedFactor){
-            console.log("Is taking off: " + this.takingOff);
-            console.log("Is landing: " + this.landing);
-            console.log("Is flying: " + this.isflying);
+            this.isManover = this.takingOff || this.landing;
             if(this.takingOff){
                 const elapsedTime = (Date.now() - this.startTime) / 1000; // Tempo em segundos
                 if (this.isOverLake) {

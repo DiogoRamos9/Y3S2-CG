@@ -3,6 +3,7 @@ import { MyDoor } from './MyDoor.js';
 import { MyWindow } from './MyWindow.js';
 import { MyPlane } from './MyPlane.js';
 import { MyCircle } from './MyCircle.js';
+import { MyUnitCube } from './MyUnitCube.js';
 
 export class MyBuilding extends CGFobject {
     constructor(scene, totalWidth, numFloors, windowsPerFloor, windowTexture, buildingColor, doorTexture, signTexture) {
@@ -26,6 +27,7 @@ export class MyBuilding extends CGFobject {
 
         this.isTakingOff = false; // Flag for helicopter taking off
         this.isLanding = false; // Flag for helicopter landing
+        this.isManeuver = false; // Flag for helicopter maneuvering
 
         this.wallMaterial = new CGFappearance(scene);
         this.wallMaterial.setAmbient(this.buildingColor[0], this.buildingColor[1], this.buildingColor[2], 1.0);
@@ -48,9 +50,30 @@ export class MyBuilding extends CGFobject {
         this.helicopterMaterialLanding = new CGFappearance(scene);
         this.helicopterMaterialLanding.setTexture(this.heliTextureLanding);
         this.helicopterMaterialLanding.setTextureWrap('REPEAT', 'REPEAT');
+
+        // Add maneuver objects
+        this.warningLight = new MyUnitCube(scene);
+        
+        // Material para as luzes em estado normal
+        this.warningLightMaterial = new CGFappearance(scene);
+        this.warningLightMaterial.setAmbient(0.8, 0.0, 0.0, 1.0);  // Vermelho
+        this.warningLightMaterial.setDiffuse(0.8, 0.0, 0.0, 1.0);
+        this.warningLightMaterial.setSpecular(0.5, 0.5, 0.5, 1.0);
+        this.warningLightMaterial.setShininess(10);
+        
+        // Material para as luzes em estado de manobra (emissivo)
+        this.warningLightEmissiveMaterial = new CGFappearance(scene);
+        this.warningLightEmissiveMaterial.setAmbient(1.0, 0.7, 0.0, 1.0);  // Laranja/âmbar
+        this.warningLightEmissiveMaterial.setDiffuse(1.0, 0.7, 0.0, 1.0);
+        this.warningLightEmissiveMaterial.setSpecular(1.0, 1.0, 1.0, 1.0);
+        this.warningLightEmissiveMaterial.setShininess(100);
+        
+        // Iniciamos o tempo para a animação pulsante
+        this.startTime = Date.now();
     }
 
     display() {
+        this.isManeuver = this.isLanding || this.isTakingOff;
         // Central Module
         this.displayModule(0, this.centralWidth, this.centralHeight, this.centralWidth, true);
 
@@ -105,8 +128,6 @@ export class MyBuilding extends CGFobject {
 
         // Top Wall
         if (isCentral) {
-            console.log("Is taking off: " + this.isTakingOff);
-            console.log("Is landing: " + this.isLanding);
             // Top Wall (Plano como base)
             this.scene.pushMatrix();
             this.scene.translate(x, height, 0);
@@ -132,7 +153,42 @@ export class MyBuilding extends CGFobject {
             else {
                 this.helicopterMaterial.apply();
             }
+
             this.heliport.display();
+            this.scene.popMatrix();
+
+            // Na parte que desenha as luzes de aviso
+            this.scene.pushMatrix();
+            const isManeuver = this.isLanding || this.isTakingOff;
+            if (isManeuver) {
+                this.updatePulsatingLights();
+            }
+
+            // Tamanho e posição das luzes de aviso
+            const lightSize = 0.15;
+            const lightOffset = width * 0.6;  // Reduzindo um pouco a distância
+
+            // Desenhar as quatro luzes nos cantos do heliporto
+            for (let i = 0; i < 4; i++) {
+                const angle = (i * Math.PI / 2) + (Math.PI / 4);  // 45º, 135º, 225º, 315º
+                const cornerX = x + Math.cos(angle) * lightOffset;
+                const cornerZ = Math.sin(angle) * lightOffset;
+                
+                this.scene.pushMatrix();
+                this.scene.translate(cornerX, height + 0.15, cornerZ);  // Elevado para ficar visível
+                this.scene.scale(lightSize, lightSize, lightSize);
+                
+                // Aplicar material adequado baseado no estado de manobra
+                if (isManeuver) {
+                    this.warningLightEmissiveMaterial.apply();
+                } else {
+                    this.warningLightMaterial.apply();
+                }
+                
+                this.warningLight.display();
+                this.scene.popMatrix();
+            }
+
             this.scene.popMatrix();
         }
         else{
@@ -182,12 +238,30 @@ export class MyBuilding extends CGFobject {
                 this.scene.popMatrix();
             }
         }
-        
-
-    
     }
 
     getCentralHeight() {
         return this.centralHeight;
+    }
+
+    updatePulsatingLights() {
+        const currentTime = Date.now();
+        const elapsedSeconds = (currentTime - this.startTime) / 1000;
+        
+        // Variação sinusoidal mais pronunciada para a emissividade (de 0.1 a 1.0)
+        const emissiveValue = 0.1 + 0.9 * Math.abs(Math.sin(elapsedSeconds * 3));
+        
+        // Cor laranja/âmbar mais viva e emissiva
+        this.warningLightEmissiveMaterial.setAmbient(1.0, 0.5, 0.0, 1.0);
+        this.warningLightEmissiveMaterial.setDiffuse(1.0, 0.5, 0.0, 1.0);
+        this.warningLightEmissiveMaterial.setSpecular(1.0, 1.0, 1.0, 1.0);
+        
+        // Configurar a emissividade (importante - este é o valor que cria o efeito de "brilho")
+        this.warningLightEmissiveMaterial.setEmission(
+            emissiveValue * 1.0,    // Componente vermelho mais forte
+            emissiveValue * 0.5,    // Componente verde médio (para cor laranja)
+            0.0,                   // Sem componente azul
+            1.0
+        );
     }
 }
