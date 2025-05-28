@@ -101,13 +101,17 @@
         }
 
         update(deltaTime, speedFactor){
+            console.log("Is taking off: " + this.takingOff);
+            console.log("Is landing: " + this.landing);
+            console.log("Is flying: " + this.isflying);
             if(this.takingOff){
                 const elapsedTime = (Date.now() - this.startTime) / 1000; // Tempo em segundos
                 if (this.isOverLake) {
                     this.position.y = Math.min(this.startlake + elapsedTime * 1.5, this.cruiseAltitude); 
-                } else {
+                }
+                else {
                     if (this.scene.building) {
-                        this.scene.building.helitakeoff();
+                        this.scene.building.heliLandingTakeOff(false, true);
                     }
                     this.position.y = Math.min(this.landingPos.y + elapsedTime * 0.9, this.cruiseAltitude);
                 }
@@ -124,14 +128,13 @@
 
             else if(this.landing){
                 const elapsedTime = (Date.now() - this.startTime) / 1000; 
-               
+            
                 if(this.isOverLake){
                     const bucketHeight = this.position.y - 3.8; 
                     const lakeHeight = 0.1;
 
                     if(bucketHeight > lakeHeight+0.001){
-                        this.position.y = Math.max(this.cruiseAltitude - elapsedTime * 1.5, lakeHeight + 3.8); // Incremento baseado no tempo absoluto
-                        
+                        this.position.y = Math.max(this.cruiseAltitude - elapsedTime * 1.5, lakeHeight + 3.8);
                     }
                     else{
                         this.landing = false;
@@ -140,21 +143,20 @@
                         this.bucketfull = true;
                         this.velocity = 0;
                         this.inclination = 0;
-                        
                     }
-
                 }
                 else {
                     const progress = Math.max(this.cruiseAltitude - elapsedTime * 0.5, this.landingPos.y) / this.cruiseAltitude;
+                    
+                    // Mantenha o estado de descida durante todo o processo
                     if (this.scene.building) {
-                        this.scene.building.helilanding();
+                        this.scene.building.heliLandingTakeOff(true, false);
                     }
 
-                    this.position.y = Math.max(this.cruiseAltitude - elapsedTime * 0.7, this.landingPos.y); // Incremento baseado no tempo absoluto
+                    this.position.y = Math.max(this.cruiseAltitude - elapsedTime * 0.7, this.landingPos.y);
                     this.position.x = this.landingPos.x + (this.position.x - this.landingPos.x) * progress;
                     this.position.z = this.landingPos.z + (this.position.z - this.landingPos.z) * progress;
 
-                
                     this.bladespeed = Math.max(this.bladespeed - 0.005, 0);
 
                     if (this.position.y <= this.landingPos.y && Math.abs(this.position.x - this.landingPos.x) < 0.01 && Math.abs(this.position.z - this.landingPos.z) < 0.01) {
@@ -167,11 +169,19 @@
                         this.velocity = 0;
                         this.bladespeed = 0;
                         this.inclination = 0;
+                        
+                        // Reset para o estado padrão apenas quando terminar completamente o pouso
+                        if (this.scene.building) {
+                            this.scene.building.heliLandingTakeOff(false, false);
+                        }
                     }
                 }
             }
 
             else if(this.isflying){
+                if (this.scene.building) {
+                    this.scene.building.heliLandingTakeOff(false, false);
+                }
                 this.position.x += this.velocity * Math.sin(this.orientation) * speedFactor * deltaTime / 1000;
                 this.position.z += this.velocity * Math.cos(this.orientation) * speedFactor * deltaTime / 1000;
 
@@ -281,6 +291,9 @@
             this.landing = false;
             this.inclination = 0;
             this.bucketfull = false;
+            if (this.scene.building) {
+                this.scene.building.heliLandingTakeOff(false, false);
+            }
         }
 
         dropwater(fire){
@@ -387,8 +400,6 @@
             this.tailRotorBlade.display();
             this.scene.popMatrix();
 
-
-            
             // Rotor traseiro Direita 
             this.scene.pushMatrix();
             this.scene.translate(0.15, 0, -1.2);

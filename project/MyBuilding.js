@@ -61,14 +61,9 @@ export class MyBuilding extends CGFobject {
         this.displayModule(this.centralWidth / 2 + this.lateralWidth / 2, this.lateralWidth, this.lateralHeight, this.lateralWidth, false);
     }
 
-    helilanding(){
-        this.isLanding = true;
-        this.isTakingOff = false;
-    }
-
-    helitakeoff(){
-        this.isTakingOff = true;
-        this.isLanding = false;
+    heliLandingTakeOff(isLanding, isTakingOff) {
+        this.isLanding = isLanding;
+        this.isTakingOff = isTakingOff;
     }
     
     displayModule(x, width, height, depth, isCentral) {
@@ -110,6 +105,8 @@ export class MyBuilding extends CGFobject {
 
         // Top Wall
         if (isCentral) {
+            console.log("Is taking off: " + this.isTakingOff);
+            console.log("Is landing: " + this.isLanding);
             // Top Wall (Plano como base)
             this.scene.pushMatrix();
             this.scene.translate(x, height, 0);
@@ -118,38 +115,25 @@ export class MyBuilding extends CGFobject {
             this.wallMaterial.apply(); // Aplicar a cor do prédio
             this.wall.display(); // Exibir o plano como base
             this.scene.popMatrix();
+
+            // Heliport Circle
+            this.scene.pushMatrix();
+            this.scene.translate(x, height + 0.01, 0); // Ligeiramente acima do plano para evitar z-fighting
+            this.scene.rotate(-Math.PI / 2, 1, 0, 0);
+            this.scene.scale(width / 2, width / 2, 1); // Ajustar o tamanho do círculo
         
-            // Heliporto (Círculo dentro do plano)
             if (this.isTakingOff) {
-                this.scene.pushMatrix();
-                this.scene.translate(x, height + 0.01, 0); // Ligeiramente acima do plano para evitar z-fighting
-                this.scene.rotate(-Math.PI / 2, 1, 0, 0);
-                this.scene.scale(width / 2, width / 2, 1); // Ajustar o tamanho do círculo
-                this.helicopterMaterialTakingOff.apply(); // Aplicar a textura do heliporto
-                this.heliport.display(); // Exibir o círculo
-                this.scene.popMatrix();
+                this.helicopterMaterialTakingOff.apply();
             }
 
             else if (this.isLanding) {
-                this.scene.pushMatrix();
-                this.scene.translate(x, height + 0.01, 0); // Ligeiramente acima do plano para evitar z-fighting
-                this.scene.rotate(-Math.PI / 2, 1, 0, 0);
-                this.scene.scale(width / 2, width / 2, 1); // Ajustar o tamanho do círculo
-                this.helicopterMaterialLanding.apply(); // Aplicar a textura do heliporto
-                this.heliport.display(); // Exibir o círculo
-                this.scene.popMatrix();
+                this.helicopterMaterialLanding.apply();
             }
             else {
-                this.scene.pushMatrix();
-                this.scene.translate(x, height + 0.01, 0); // Ligeiramente acima do plano para evitar z-fighting
-                this.scene.rotate(-Math.PI / 2, 1, 0, 0);
-                this.scene.scale(width / 2, width / 2, 1); // Ajustar o tamanho do círculo
-                this.helicopterMaterial.apply(); // Aplicar a textura do heliporto
-                this.heliport.display(); // Exibir o círculo
-                this.scene.popMatrix();
-
+                this.helicopterMaterial.apply();
             }
-            
+            this.heliport.display();
+            this.scene.popMatrix();
         }
         else{
         this.scene.pushMatrix();
