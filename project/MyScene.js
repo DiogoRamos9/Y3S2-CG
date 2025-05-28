@@ -2,10 +2,9 @@ import { CGFscene, CGFcamera, CGFaxis, CGFappearance, CGFshader, CGFtexture } fr
 import { MyPlane } from "./MyPlane.js";
 import { MySphere } from "./MySphere.js";
 import { MyPanorama } from "./MyPanorama.js";
-import { MyWindow } from "./Mywindow.js";
+import { MyWindow } from "./MyWindow.js";
 import { MyDoor } from "./MyDoor.js";
 import { MyBuilding } from "./MyBuilding.js";
-import { MyCircle } from "./MyCircle.js";
 import { MyTree } from "./MyTree.js";
 import { MyForest } from "./MyForest.js";
 import { MyHeli } from "./MyHeli.js";

@@ -25,7 +25,7 @@ export class MyBuilding extends CGFobject {
         this.heliport = new MyCircle(scene, 1, 64); // Helicopter landing pad
 
         this.isTakingOff = false; // Flag for helicopter taking off
-        this.isLading = false; // Flag for helicopter landing
+        this.isLanding = false; // Flag for helicopter landing
 
         this.wallMaterial = new CGFappearance(scene);
         this.wallMaterial.setAmbient(this.buildingColor[0], this.buildingColor[1], this.buildingColor[2], 1.0);
@@ -62,13 +62,13 @@ export class MyBuilding extends CGFobject {
     }
 
     helilanding(){
-        this.isLading = true;
+        this.isLanding = true;
         this.isTakingOff = false;
     }
 
     helitakeoff(){
         this.isTakingOff = true;
-        this.isLading = false;
+        this.isLanding = false;
     }
     
     displayModule(x, width, height, depth, isCentral) {
@@ -130,7 +130,7 @@ export class MyBuilding extends CGFobject {
                 this.scene.popMatrix();
             }
 
-            else if (this.isLading) {
+            else if (this.isLanding) {
                 this.scene.pushMatrix();
                 this.scene.translate(x, height + 0.01, 0); // Ligeiramente acima do plano para evitar z-fighting
                 this.scene.rotate(-Math.PI / 2, 1, 0, 0);
