@@ -2,7 +2,6 @@
     import { MySphere } from './MySphere.js';
     import { MyCone } from './MyCone.js';
     import { MyCylinder } from './MyCylinder.js';
-    import { MyCircle } from './MyCircle.js';
     import { MyPlane } from './MyPlane.js';
     import { MyRoundedSquare } from './MyRoundedSquare.js';
     import { MyUnitCube } from './MyUnitCube.js';
@@ -102,16 +101,15 @@
         }
 
         update(deltaTime, speedFactor){
-            
-
             if(this.takingOff){
                 const elapsedTime = (Date.now() - this.startTime) / 1000; // Tempo em segundos
                 if (this.isOverLake) {
-                    
-                    this.position.y = Math.min(this.startlake + elapsedTime * 0.8, this.cruiseAltitude); 
+                    this.position.y = Math.min(this.startlake + elapsedTime * 1.5, this.cruiseAltitude); 
                 } else {
-                    
-                    this.position.y = Math.min(this.landingPos.y + elapsedTime * 0.5, this.cruiseAltitude);
+                    if (this.scene.building) {
+                        this.scene.building.helitakeoff();
+                    }
+                    this.position.y = Math.min(this.landingPos.y + elapsedTime * 0.9, this.cruiseAltitude);
                 }
                 
                 this.bladespeed = Math.min(this.bladespeed + 0.1, 1);
@@ -132,7 +130,7 @@
                     const lakeHeight = 0.1;
 
                     if(bucketHeight > lakeHeight+0.001){
-                        this.position.y = Math.max(this.cruiseAltitude - elapsedTime * 0.8, lakeHeight + 3.8); // Incremento baseado no tempo absoluto
+                        this.position.y = Math.max(this.cruiseAltitude - elapsedTime * 1.5, lakeHeight + 3.8); // Incremento baseado no tempo absoluto
                         
                     }
                     else{
@@ -148,8 +146,11 @@
                 }
                 else {
                     const progress = Math.max(this.cruiseAltitude - elapsedTime * 0.5, this.landingPos.y) / this.cruiseAltitude;
+                    if (this.scene.building) {
+                        this.scene.building.helilanding();
+                    }
 
-                    this.position.y = Math.max(this.cruiseAltitude - elapsedTime * 0.5, this.landingPos.y); // Incremento baseado no tempo absoluto
+                    this.position.y = Math.max(this.cruiseAltitude - elapsedTime * 0.7, this.landingPos.y); // Incremento baseado no tempo absoluto
                     this.position.x = this.landingPos.x + (this.position.x - this.landingPos.x) * progress;
                     this.position.z = this.landingPos.z + (this.position.z - this.landingPos.z) * progress;
 

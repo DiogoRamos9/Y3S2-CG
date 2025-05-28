@@ -12,6 +12,7 @@ import { MyHeli } from "./MyHeli.js";
 import { MyLake } from "./MyLake.js";
 import { MyFire } from "./MyFire.js";
 
+
 /**
  * MyScene
  * @constructor
@@ -107,18 +108,18 @@ export class MyScene extends CGFscene {
     this.fire.initShaders(this);
 
 
-    this.displayAxis = true;
-    this.displayPlane = false;
+    this.displayAxis = false;
+    this.displayPlane = true;
     this.displaySphere = false;
-    this.displayPanorama = false;
+    this.displayPanorama = true;
     this.displayWindow = false;
     this.displayDoor = false;
-    this.displayBuilding = false;
+    this.displayBuilding = true;
     this.displayTree = false;
-    this.displayForest = false;
-    this.displayHeli = false;
-    this.displayFire = false;
-    this.displayLake = false;
+    this.displayForest = true;
+    this.displayHeli = true;
+    this.displayFire = true;
+    this.displayLake = true;
     this.fireReignite = 0;
     
 
@@ -374,7 +375,8 @@ export class MyScene extends CGFscene {
             this.windowTexture,
             [0.8, 0.8, 0.8],
             this.doorTexture,
-            this.placarTexture
+            this.placarTexture,
+
         );
     }
 
