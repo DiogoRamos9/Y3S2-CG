@@ -56,14 +56,11 @@ export class MyPanorama extends CGFobject {
         this.scene.popMatrix();
     }
     
-    // Method to update cloud movement, can be called from the scene's update method
     update(t) {
-       const timeValue = t * 0.001; // Convert milliseconds to seconds with a smaller factor
-    
-        // Update both uniforms
+        const timeValue = t * 0.02;
         this.shader.setUniformsValues({ 
             uTime: timeValue,
-            uCloudIntensity: 1.5 + Math.sin(timeValue * 0.15) * 0.2
+            uCloudIntensity: 1.2 + Math.sin(timeValue * 0.08) * 0.15
         });
     }
 }
