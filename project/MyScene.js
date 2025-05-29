@@ -201,7 +201,10 @@ export class MyScene extends CGFscene {
     if (this.gui.isKeyPressed("KeyL")) {
       text += " L ";
       keysPressed = true;
-      this.heli.land();
+      // Only land if the helicopter does not have a full bucket
+      if (!this.heli.bucketfull) {
+        this.heli.land();
+      }
     }
 
     if (this.gui.isKeyPressed("KeyF")) {
@@ -308,6 +311,10 @@ export class MyScene extends CGFscene {
 
     if(this.fire.fireShader){
       this.fire.fireShader.setUniformsValues({ uTime: time/5 });
+    }
+
+    if(this.building) {
+      this.building.update(t);
     }
   }
 

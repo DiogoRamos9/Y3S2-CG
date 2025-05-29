@@ -70,6 +70,11 @@ export class MyBuilding extends CGFobject {
         
         // Iniciamos o tempo para a animação pulsante
         this.startTime = Date.now();
+
+        // Control texture swapping
+        this.lastTextureToggleTime = Date.now();
+        this.showNormalTexture = true;
+        this.textureToggleInterval = 500;
     }
 
     display() {
@@ -82,6 +87,14 @@ export class MyBuilding extends CGFobject {
 
         // Right Lateral Module
         this.displayModule(this.centralWidth / 2 + this.lateralWidth / 2, this.lateralWidth, this.lateralHeight, this.lateralWidth, false);
+    }
+
+    toggleHeliportTexture() {
+        const currentTime = Date.now();
+        if (currentTime - this.lastTextureToggleTime > this.textureToggleInterval) {
+            this.showNormalTexture = !this.showNormalTexture;
+            this.lastTextureToggleTime = currentTime;
+        }
     }
 
     heliLandingTakeOff(isLanding, isTakingOff) {
@@ -139,18 +152,23 @@ export class MyBuilding extends CGFobject {
 
             // Heliport Circle
             this.scene.pushMatrix();
-            this.scene.translate(x, height + 0.01, 0); // Ligeiramente acima do plano para evitar z-fighting
+            this.scene.translate(x, height + 0.01, 0);
             this.scene.rotate(-Math.PI / 2, 1, 0, 0);
-            this.scene.scale(width / 2, width / 2, 1); // Ajustar o tamanho do círculo
+            this.scene.scale(width / 2, width / 2, 1);
         
             if (this.isTakingOff) {
-                this.helicopterMaterialTakingOff.apply();
-            }
-
-            else if (this.isLanding) {
-                this.helicopterMaterialLanding.apply();
-            }
-            else {
+                if (this.showNormalTexture) {
+                    this.helicopterMaterial.apply();
+                } else {
+                    this.helicopterMaterialTakingOff.apply();
+                }
+            } else if (this.isLanding) {
+                if (this.showNormalTexture) {
+                    this.helicopterMaterial.apply();
+                } else {
+                    this.helicopterMaterialLanding.apply();
+                }
+            } else {
                 this.helicopterMaterial.apply();
             }
 
@@ -263,5 +281,14 @@ export class MyBuilding extends CGFobject {
             0.0,                   // Sem componente azul
             1.0
         );
+    }
+
+    update(t) {
+        if (this.isLanding || this.isTakingOff) {
+            this.updatePulsatingLights();
+            this.toggleHeliportTexture();
+        } else {
+            this.showNormalTexture = true;
+        }
     }
 }
