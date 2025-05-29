@@ -133,7 +133,7 @@
             else if (this.landing) {
                 const elapsedTime = (Date.now() - this.startTime) / 1000; 
             
-                if(this.isOverLake){
+                if(this.isOverLake && !this.bucketfull){
                     const bucketHeight = this.position.y - 3.8; 
                     const lakeHeight = 0.1;
 
@@ -149,7 +149,7 @@
                         this.inclination = 0;
                     }
                 }
-                else {
+                else if(!this.isOverLake && !this.bucketfull){
                     const progress = Math.max(this.cruiseAltitude - elapsedTime * 0.5, this.landingPos.y) / this.cruiseAltitude;
                     
                     // Don not alter the building state even though the helicopter is landing (it is not landing on the building)
