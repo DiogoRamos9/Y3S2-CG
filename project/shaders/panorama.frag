@@ -44,8 +44,8 @@ void main() {
     );
     
     vec3 darkCloudColor = mix(
-        vec3(0.3, 0.3, 0.35),  // Darker gray with slight blue tint
-        vec3(0.5, 0.5, 0.55),  // Medium gray for highlights
+        vec3(0.3, 0.3, 0.35),  
+        vec3(0.5, 0.5, 0.55),
         (cloudColor1.r + cloudColor2.r + cloudColor3.r + cloudColor4.r) / 4.0
     );
     

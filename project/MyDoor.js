@@ -6,10 +6,8 @@ export class MyDoor extends CGFobject {
         super(scene);
         this.scene = scene;
 
-    
         this.plane = new MyPlane(scene,64);
 
-        
         this.material = new CGFappearance(scene); 
         this.material.setTexture(texture); 
         this.material.setTextureWrap('REPEAT', 'REPEAT');
@@ -22,13 +20,14 @@ export class MyDoor extends CGFobject {
     }
 
     display() {
-
+        // Door
         this.scene.pushMatrix();
         this.material.apply(); 
         this.scene.scale(6,7,10);
         this.plane.display(); 
         this.scene.popMatrix();
 
+        // Door handle
         this.scene.pushMatrix();
         this.material2.apply();
         this.scene.translate(0,5.5,0);

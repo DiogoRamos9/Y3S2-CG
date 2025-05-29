@@ -11,17 +11,17 @@ export class MyPanorama extends CGFobject {
         this.sphere = new MySphere(this.scene, true, 30, 30);
         
         // Load cloud texture
-        this.cloudTexture = new CGFtexture(this.scene, 'texture/clouds.png');  // Make sure you add this texture
+        this.cloudTexture = new CGFtexture(this.scene, 'texture/clouds.png');
         
-        // Initialize shader
+        // Initialize shader for clouds
         this.shader = new CGFshader(this.scene.gl, 'shaders/panorama.vert', 'shaders/panorama.frag');
         
         // Set initial shader uniform values
         this.shader.setUniformsValues({
-            uSamplerPanorama: 0,  // Panorama texture unit
-            uSamplerClouds: 1,    // Cloud texture unit
-            uTime: 0.0,           // Initial time
-            uCloudIntensity: 1.5  // Cloud visibility (adjust as needed)
+            uSamplerPanorama: 0,
+            uSamplerClouds: 1,
+            uTime: 0.0,
+            uCloudIntensity: 1.5
         });
         
         // Start time for animation

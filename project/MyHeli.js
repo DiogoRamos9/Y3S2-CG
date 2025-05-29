@@ -33,26 +33,24 @@
             this.heliSound.loop = true;
             this.heliSound.volume = 0.5;
 
-            // Componentes do helicóptero
-            this.body = new MySphere(scene, false, 20, 20); // Cabeça/cabine
-            this.tail = new MyCone(scene, 20, 0.2, 2); // Cauda
-            this.tailend = new MySphere(scene, false, 20, 20); // Extremidade da cauda
-            this.mainRotor = new MyCylinder(scene, 0.05, 0.05, 0.70, 10, 1); // Hélice superior
-            this.mainRotorBlade = new MyPlane(scene, 10); // Pá da hélice
-            this.tailRotor = new MyCylinder(scene, 0.05, 0.05, 0.70, 10, 1); // Hélice da cauda
-            this.tailRotorBlade = new MyPlane(scene, 10); // Pá da hélice da cauda
-            this.landingGear = new MyCylinder(scene, 0.05, 0.05, 1, 10, 1); // Trem de aterragem
-            this.bucket = new MyCone(scene, 20, 0.3, 0.5); // Balde de água
-            this.window = new MyRoundedSquare(scene, 0.4, 0.08); // Janela
-            this.cabin = new MySphere(scene, false, 30, 30, false); // Cabeça/cabine
+            // Helicopter parts
+            this.body = new MySphere(scene, false, 20, 20);
+            this.tail = new MyCone(scene, 20, 0.2, 2);
+            this.tailend = new MySphere(scene, false, 20, 20);
+            this.mainRotor = new MyCylinder(scene, 0.05, 0.05, 0.70, 10, 1);
+            this.mainRotorBlade = new MyPlane(scene, 10);
+            this.tailRotor = new MyCylinder(scene, 0.05, 0.05, 0.70, 10, 1);
+            this.tailRotorBlade = new MyPlane(scene, 10);
+            this.landingGear = new MyCylinder(scene, 0.05, 0.05, 1, 10, 1);
+            this.bucket = new MyCone(scene, 20, 0.3, 0.5);
+            this.window = new MyRoundedSquare(scene, 0.4, 0.08);
+            this.cabin = new MySphere(scene, false, 30, 30, false);
 
             // Water
-
             this.waterDrops = [];
             this.cube = new MyUnitCube(scene);
 
-            // Materiais 
-
+            // Water textures and materials
             this.waterTexture = new CGFtexture(scene, 'texture/water.jpg');
             this.waterMaterial = new CGFappearance(scene);
             this.waterMaterial.setTexture(this.waterTexture);
@@ -62,6 +60,7 @@
             this.waterMaterial.setSpecular(0.5, 0.5, 0.5, 1.0);
             this.waterMaterial.setShininess(10.0);
             
+            // Helices textures and materials
             this.helicetexture = new CGFtexture(scene, 'texture/helice.jpg');
             this.heliceMaterial = new CGFappearance(scene);
             this.heliceMaterial.setTexture(this.helicetexture);
@@ -71,7 +70,7 @@
             this.heliceMaterial.setSpecular(0.5, 0.5, 0.5, 1.0); 
             this.heliceMaterial.setShininess(50.0);
 
-
+            // Landing gear textures and materials
             this.tremtexture = new CGFtexture(scene, 'texture/metal.jpg');
             this.tremMaterial = new CGFappearance(scene);
             this.tremMaterial.setTexture(this.tremtexture);
@@ -81,6 +80,7 @@
             this.tremMaterial.setSpecular(0.5, 0.5, 0.5, 1.0);
             this.tremMaterial.setShininess(50.0);
 
+            // Helice textures and materials
             this.helicetexture = new CGFtexture(scene, 'texture/heli.png');
             this.heliMaterial = new CGFappearance(scene);
             this.heliMaterial.setTexture(this.helicetexture);
@@ -90,6 +90,7 @@
             this.heliMaterial.setSpecular(0.5, 0.5, 0.5, 1.0);
             this.heliMaterial.setShininess(10.0);
 
+            // Window textures and materials
             this.windowtexture = new CGFtexture(scene, 'texture/cabin.jpg');
             this.windowMaterial = new CGFappearance(scene);
             this.windowMaterial.setTexture(this.windowtexture);
@@ -100,10 +101,14 @@
             this.windowMaterial.setShininess(10.0);
         }
 
-        update(deltaTime, speedFactor){
-            this.isManover = this.takingOff || this.landing;
-            if(this.takingOff){
-                const elapsedTime = (Date.now() - this.startTime) / 1000; // Tempo em segundos
+        // Update the helicopter's position and state
+        update(deltaTime, speedFactor) {
+            this.isManover = this.takingOff || this.landing;    // Checks if the helicopter is in a maneuver state
+
+            // Update position based on current state
+            // takingOff -> ascending to cruise altitude
+            if (this.takingOff) {
+                const elapsedTime = (Date.now() - this.startTime) / 1000;
                 if (this.isOverLake) {
                     this.position.y = Math.min(this.startlake + elapsedTime * 1.5, this.cruiseAltitude); 
                 }
@@ -124,7 +129,8 @@
 
             }
 
-            else if(this.landing){
+            // landing -> descending to landing position depending if over lake or not
+            else if (this.landing) {
                 const elapsedTime = (Date.now() - this.startTime) / 1000; 
             
                 if(this.isOverLake){
@@ -146,7 +152,7 @@
                 else {
                     const progress = Math.max(this.cruiseAltitude - elapsedTime * 0.5, this.landingPos.y) / this.cruiseAltitude;
                     
-                    // Mantenha o estado de descida durante todo o processo
+                    // Don not alter the building state even though the helicopter is landing (it is not landing on the building)
                     if (this.scene.building) {
                         this.scene.building.heliLandingTakeOff(true, false);
                     }
@@ -168,7 +174,7 @@
                         this.bladespeed = 0;
                         this.inclination = 0;
                         
-                        // Reset para o estado padrão apenas quando terminar completamente o pouso
+                        // Reset the helicopter position to the landing position
                         if (this.scene.building) {
                             this.scene.building.heliLandingTakeOff(false, false);
                         }
@@ -176,7 +182,8 @@
                 }
             }
 
-            else if(this.isflying){
+            // flying -> moving
+            else if (this.isflying) {
                 if (this.scene.building) {
                     this.scene.building.heliLandingTakeOff(false, false);
                 }
@@ -186,23 +193,24 @@
                 this.position.y = this.cruiseAltitude;
                 
                  if (this.inclination > 0) {
-                    this.inclination = Math.max(this.inclination - 0.005, 0); // Reduz a inclinação para frente
+                    this.inclination = Math.max(this.inclination - 0.005, 0);
                 } else if (this.inclination < 0) {
-                    this.inclination = Math.min(this.inclination + 0.005, 0); // Reduz a inclinação para trás
+                    this.inclination = Math.min(this.inclination + 0.005, 0);
                 }
             }
 
-            if(this.waterDrops.length > 0){
+            // Check if the helicopter has already been filled with water
+            if (this.waterDrops.length > 0) {
                 const elapsedTime = (Date.now() - this.startTime) / 1000; 
-                for(let drop of this.waterDrops){
+                for (let drop of this.waterDrops) {
                     drop.y += drop.speed * elapsedTime; 
                 }
 
                 const fireX=16, fireZ=22, fireRadius=10;
-                for(let drop of this.waterDrops){
+                for (let drop of this.waterDrops) {
                     const distanceToFire = Math.sqrt(Math.pow(drop.x - fireX, 2) + Math.pow(drop.z - fireZ, 2));
-                    if(drop.y <= 0.5 && distanceToFire <= fireRadius){
-                        if(this.targetFire && this.targetFire.extinguished === false){
+                    if (drop.y <= 0.5 && distanceToFire <= fireRadius) {
+                        if (this.targetFire && this.targetFire.extinguished === false) {
                             this.targetFire.extinguished = true;
                             this.scene.fireReignite = 10; 
                         }
@@ -212,37 +220,37 @@
                 this.waterDrops = this.waterDrops.filter(drop => drop.y > 0); 
             }
 
-            if((this.isflying || this.takingOff) && this.heliSound.paused){
+            // If the helicopter is flying or taking off, play the sound
+            if ((this.isflying || this.takingOff) && this.heliSound.paused) {
                 this.heliSound.play();
             }
-
-            if(!this.isflying && !this.takingOff && !this.isOverLake && !this.heliSound.paused){
+            if (!this.isflying && !this.takingOff && !this.isOverLake && !this.heliSound.paused) {
                 this.heliSound.pause();
                 this.heliSound.currentTime = 0;
             }
 
         }
 
-        turn(angle){
+        // Control methods
+        turn(angle) {
             this.orientation += angle*this.scene.speedFactor;
         }
 
-        accelerate(value){
-            if(this.isflying){
-            this.velocity = Math.max(this.velocity + value, 0);
-            
-            if(value > 0){
-                this.inclination = Math.min(this.inclination + 0.009, Math.PI / 12);
+        accelerate(value) {
+            if (this.isflying) {
+                this.velocity = Math.max(this.velocity + value, 0);
+                
+                if (value > 0) {
+                    this.inclination = Math.min(this.inclination + 0.009, Math.PI / 12);
+                }
+                else if (value < 0 && this.velocity > 0) {
+                    this.inclination = Math.max(this.inclination - 0.009, -Math.PI / 12);
+                }
             }
-            else if(value < 0 && this.velocity > 0){
-                this.inclination = Math.max(this.inclination - 0.009, -Math.PI / 12);
-            }
-           
-        }
         }
 
-        takeOff(){
-            if((!this.isflying && !this.takingOff )|| (this.isOverLake)){
+        takeOff() {
+            if ((!this.isflying && !this.takingOff )|| (this.isOverLake)) {
                 this.takingOff = true;  
                 this.bladespeed = 0.2;
                 this.startTime = Date.now();
@@ -250,12 +258,10 @@
             }
         }
 
-        land(){
-            if(this.isflying && !this.landing){
-                
-
-                const lakeCenterX = -50; // Coordenada X do centro do lago
-                const lakeCenterZ = 50; // Coordenada Z do centro do lago
+        land() {
+            if (this.isflying && !this.landing) {
+                const lakeCenterX = -50;
+                const lakeCenterZ = 50;
                 const lakeRadius = 24;
 
                 const distanceToLakeCenter = Math.sqrt(Math.pow(this.position.x - lakeCenterX, 2) + Math.pow(this.position.z - lakeCenterZ, 2));
@@ -276,7 +282,7 @@
             }
         }
 
-        reset(){
+        reset() {
             this.isflying = false;
             this.position.x = this.landingPos.x;
             this.position.z = this.landingPos.z;
@@ -294,8 +300,7 @@
             }
         }
 
-        dropwater(fire){
-
+        dropwater(fire) {
             this.targetFire = fire;
             const fireX = 16;
             const fireZ = 22;
@@ -303,7 +308,7 @@
 
             const distanceToFire = Math.sqrt(Math.pow(this.position.x - fireX, 2) + Math.pow(this.position.z - fireZ, 2));
 
-            if(this.bucketdeployed && this.bucketfull && distanceToFire <= fireRadius){
+            if (this.bucketdeployed && this.bucketfull && distanceToFire <= fireRadius) {
                 this.startTime = Date.now();
                  for (let i = 0; i < 10; i++) {
                     this.waterDrops.push({
@@ -335,7 +340,7 @@
             this.cabin.display(); 
             this.scene.popMatrix();
 
-            // Cauda
+            // Tail
             this.scene.pushMatrix();
             this.scene.translate(0, 0, -1.2);
             this.scene.rotate(Math.PI / 2, 1, 0, 0);
@@ -343,7 +348,7 @@
             this.tail.display();
             this.scene.popMatrix();
 
-            // Extremidade da cauda
+            // Tail end
             this.scene.pushMatrix();
             this.scene.translate(0, 0, -1.2);
             this.scene.scale(0.19, 0.19, 0.19);
@@ -351,7 +356,7 @@
             this.tailend.display();
             this.scene.popMatrix();
 
-            // Rotor traseiro Esquerda 
+            // Tail rotor
             this.scene.pushMatrix();
             this.scene.translate(-0.15, 0, -1.2);
             this.scene.rotate(Math.PI / 2, 0, 0, 1); 
@@ -360,7 +365,7 @@
             this.tailRotor.display();
             this.scene.popMatrix();
 
-            // Hélice traseira - pá vertical
+            // Tail rotor - blades
             this.scene.pushMatrix();
             this.scene.translate(-0.20, 0, -1.7);
             this.scene.rotate(-Math.PI / 2, 0, 0, 1);
@@ -371,6 +376,7 @@
             this.tailRotorBlade.display();
             this.scene.popMatrix();
 
+            // Every helix
             this.scene.pushMatrix();
             this.scene.translate(-0.20, 0, -1.7);
             this.scene.rotate(Math.PI / 2, 0, 0, 1);
@@ -381,7 +387,6 @@
             this.tailRotorBlade.display();
             this.scene.popMatrix();
 
-            // Hélice traseira - pá horizontal
             this.scene.pushMatrix();
             this.scene.translate(-0.20, 0, -1.18); 
             this.scene.rotate(-Math.PI / 2, 0, 1, 0); 
@@ -398,7 +403,6 @@
             this.tailRotorBlade.display();
             this.scene.popMatrix();
 
-            // Rotor traseiro Direita 
             this.scene.pushMatrix();
             this.scene.translate(0.15, 0, -1.2);
             this.scene.rotate(-Math.PI / 2, 0, 0, 1); 
@@ -406,7 +410,7 @@
             this.tremMaterial.apply();
             this.tailRotor.display();
             this.scene.popMatrix();
-             // Hélice traseira - pá vertical
+            
             this.scene.pushMatrix();
             this.scene.translate(0.20, 0, -1.7);
             this.scene.rotate(-Math.PI / 2, 0, 0, 1);
@@ -427,7 +431,6 @@
             this.tailRotorBlade.display();
             this.scene.popMatrix();
 
-            // Hélice traseira - pá horizontal
             this.scene.pushMatrix();
             this.scene.translate(0.20, 0, -1.18); 
             this.scene.rotate(-Math.PI / 2, 0, 1, 0); 
@@ -436,7 +439,7 @@
             this.tailRotorBlade.display();
             this.scene.popMatrix();
 
-             this.scene.pushMatrix();
+            this.scene.pushMatrix();
             this.scene.translate(0.20, 0, -1.18); 
             this.scene.rotate(Math.PI / 2, 0, 1, 0); 
             this.scene.scale(0.4, 0.03, 1);
@@ -444,10 +447,6 @@
             this.tailRotorBlade.display();
             this.scene.popMatrix();
             
-
-
-
-            // Hélice superior
             this.scene.pushMatrix();
             this.scene.translate(0, 0.50, 0);
             this.scene.scale(2, 0.1, 2);
@@ -455,10 +454,8 @@
             this.mainRotor.display();
             this.scene.popMatrix();
 
-            // Hélice superior - pás diagonais
             const bladeLength = 0.7;
 
-            // Pá 1 (diagonal trás-direita)
             this.scene.pushMatrix();
             this.scene.translate(0, 0.53, 0);
             this.scene.rotate(this.bladespeed * Date.now() * 0.02, 0, 1, 0);
@@ -481,7 +478,6 @@
             this.mainRotorBlade.display();
             this.scene.popMatrix();
 
-            // Pá 2 (diagonal frente-direita)
             this.scene.pushMatrix();
             this.scene.translate(0, 0.53, 0);
             this.scene.rotate(this.bladespeed * Date.now() * 0.02, 0, 1, 0);
@@ -504,7 +500,6 @@
             this.mainRotorBlade.display();
             this.scene.popMatrix();
 
-            // Pá 3 (diagonal trás-esquerda)
             this.scene.pushMatrix();
             this.scene.translate(0, 0.53, 0);
             this.scene.rotate(this.bladespeed * Date.now() * 0.02, 0, 1, 0);
@@ -527,7 +522,6 @@
             this.mainRotorBlade.display();
             this.scene.popMatrix();
 
-            // Pá 4 (diagonal frente-esquerda)
             this.scene.pushMatrix();
             this.scene.translate(0, 0.53, 0);
             this.scene.rotate(this.bladespeed * Date.now() * 0.02, 0, 1, 0);
@@ -550,11 +544,8 @@
             this.mainRotorBlade.display();
             this.scene.popMatrix();
 
-            // ===== Trem de aterragem =====
-
-            // --- Skid ESQUERDO ---
+            // Landing gear
             this.scene.pushMatrix();
-            // posiciona & centraliza o cilindro deitado no eixo Z
             this.scene.translate(-0.4, -0.5, -0.5);      
             this.scene.scale(0.85, 1, 1); 
             this.scene.rotate(Math.PI / 2, 1, 0, 0);  
@@ -562,7 +553,6 @@
             this.landingGear.display();
             this.scene.popMatrix();
 
-            // --- Skid DIREITO ---
             this.scene.pushMatrix();
             this.scene.translate( 0.4, -0.5, -0.5);    
             this.scene.scale(0.85, 1.0, 1);    
@@ -571,7 +561,6 @@
             this.landingGear.display();
             this.scene.popMatrix();
 
-            // --- Suporte VERTICAL ESQUERDO-FRENTE ---
             this.scene.pushMatrix();
             this.scene.translate(-0.4, -0.5,  0.3);    
             this.scene.scale(1, 0.25, 1);
@@ -580,7 +569,6 @@
             this.landingGear.display();
             this.scene.popMatrix();
 
-            // --- Suporte VERTICAL ESQUERDO-TRÁS ---
             this.scene.pushMatrix();
             this.scene.translate(-0.4, -0.5 , -0.3);    
             this.scene.scale(1, 0.25, 1);
@@ -589,7 +577,6 @@
             this.landingGear.display();
             this.scene.popMatrix();
 
-            // --- Suporte VERTICAL DIREITO-FRENTE ---
             this.scene.pushMatrix();
             this.scene.translate( 0.4, -0.5,  0.3);    
             this.scene.scale(1, 0.25, 1);
@@ -598,7 +585,6 @@
             this.landingGear.display();
             this.scene.popMatrix();
 
-            // --- Suporte VERTICAL DIREITO-TRÁS ---
             this.scene.pushMatrix();
             this.scene.translate( 0.4, -0.5, -0.3);    
             this.scene.scale(1, 0.25, 1);
@@ -607,8 +593,7 @@
             this.landingGear.display();
             this.scene.popMatrix();
 
-
-            // Janela Direita Traseira
+            // Windows
             this.scene.pushMatrix();
             this.scene.translate(0.432, 0.22, -0.2); 
             this.scene.rotate(Math.PI / 1.8, 0, 1, 0); 
@@ -617,7 +602,6 @@
             this.window.display(); 
             this.scene.popMatrix();
             
-            // Janela Direita Frontal
             this.scene.pushMatrix();
             this.scene.translate(0.432, 0.22, 0.2);
             this.scene.rotate(Math.PI / 2.2, 0, 1, 0);
@@ -626,7 +610,6 @@
             this.window.display();
             this.scene.popMatrix();
 
-            // Janela Esquerda Traseira
             this.scene.pushMatrix();
             this.scene.translate(-0.432, 0.22, -0.2); 
             this.scene.rotate(-Math.PI / 1.8, 0, 1, 0); 
@@ -635,7 +618,6 @@
             this.window.display(); 
             this.scene.popMatrix();
 
-            // Janela Esquerda Frontal
             this.scene.pushMatrix();
             this.scene.translate(-0.432, 0.22, 0.2); 
             this.scene.rotate(-Math.PI / 2.2, 0, 1, 0); 
@@ -645,38 +627,36 @@
             this.scene.popMatrix(); 
 
 
-            // Balde de água
-            if(this.bucketdeployed){
-            this.scene.pushMatrix();
-            
-            if(this.bucketfull){ 
-                this.scene.rotate(Math.PI, 1, 0, 0);
-                this.scene.translate(0, 0.48, 0);
-                this.waterMaterial.apply();
-               
-            }
-            else{
-                this.scene.translate(0, -0.7, 0);     
-                this.tremMaterial.apply();
-            
-            }
-
-            this.scene.scale(0.5, 0.5, 0.5);
-            this.bucket.display();
-            this.scene.popMatrix();
-            }
-
-            // Gotas de água
-            if(this.waterDrops.length > 0){
-            for(let drop of this.waterDrops){
+            // Water bucket
+            if (this.bucketdeployed) {
                 this.scene.pushMatrix();
-                // Ajuste para o sistema de coordenadas local do helicóptero
-                this.scene.translate(drop.x - this.position.x, drop.y - this.position.y, drop.z - this.position.z);
-                this.scene.scale(0.2, 0.2, 0.2);
-                this.waterMaterial.apply();
-                this.cube.display();
-                this.scene.popMatrix();
+                
+                if (this.bucketfull) { 
+                    this.scene.rotate(Math.PI, 1, 0, 0);
+                    this.scene.translate(0, 0.48, 0);
+                    this.waterMaterial.apply();
+                
                 }
+                else {
+                    this.scene.translate(0, -0.7, 0);     
+                    this.tremMaterial.apply();
+                }
+
+                this.scene.scale(0.5, 0.5, 0.5);
+                this.bucket.display();
+                this.scene.popMatrix();
+            }
+
+            // Water drops
+            if (this.waterDrops.length > 0) {
+                for (let drop of this.waterDrops) {
+                    this.scene.pushMatrix();
+                    this.scene.translate(drop.x - this.position.x, drop.y - this.position.y, drop.z - this.position.z);
+                    this.scene.scale(0.2, 0.2, 0.2);
+                    this.waterMaterial.apply();
+                    this.cube.display();
+                    this.scene.popMatrix();
+                    }
             }
         }
     }

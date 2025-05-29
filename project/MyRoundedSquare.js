@@ -13,7 +13,7 @@ export class MyRoundedSquare extends CGFobject {
         this.corner = new MyQuarterCircle(scene, 1, 10); 
         
         this.edgeMaterial = new CGFappearance(scene);
-        this.edgeMaterial.setAmbient(0, 0, 0, 1.0); // Preto
+        this.edgeMaterial.setAmbient(0, 0, 0, 1.0);
         this.edgeMaterial.setDiffuse(0, 0, 0, 1.0);
         this.edgeMaterial.setSpecular(1.0, 1.0, 1.0, 1.0);
         this.edgeMaterial.setShininess(10.0);
@@ -30,24 +30,24 @@ export class MyRoundedSquare extends CGFobject {
 
     display() {
         const s = this.size / 2;
-        const r = this.radius * 0.3; // Reduz ainda mais o tamanho das bordas
+        const r = this.radius * 0.3;
 
-        // Centro
+        // Center
         this.scene.pushMatrix();
         this.scene.scale(this.size - 2 * r, this.size - 2 * r, 1);
-        this.centerMaterial.apply(); // Aplica o material azul meia-noite
+        this.centerMaterial.apply();
         this.center.display();
         this.scene.popMatrix();
 
-        // Borda superior
+        // Top border
         this.scene.pushMatrix();
         this.scene.translate(0, s - r / 2, 0);
         this.scene.scale(this.size - 2 * r, r, 1);
-        this.edgeMaterial.apply(); // Aplica o material preto
+        this.edgeMaterial.apply();
         this.edge.display();
         this.scene.popMatrix();
 
-        // Borda inferior
+        // Bottom border
         this.scene.pushMatrix();
         this.scene.translate(0, -s + r / 2, 0);
         this.scene.scale(this.size - 2 * r, r, 1);
@@ -55,7 +55,7 @@ export class MyRoundedSquare extends CGFobject {
         this.edge.display();
         this.scene.popMatrix();
 
-        // Borda esquerda
+        // Left border
         this.scene.pushMatrix();
         this.scene.translate(-s + r / 2, 0, 0);
         this.scene.scale(r, this.size - 2 * r, 1);
@@ -63,7 +63,7 @@ export class MyRoundedSquare extends CGFobject {
         this.edge.display();
         this.scene.popMatrix();
 
-        // Borda direita
+        // Right border
         this.scene.pushMatrix();
         this.scene.translate(s - r / 2, 0, 0);
         this.scene.scale(r, this.size - 2 * r, 1);
@@ -71,9 +71,7 @@ export class MyRoundedSquare extends CGFobject {
         this.edge.display();
         this.scene.popMatrix();
 
-        // Cantos arredondados (¼ de círculo cada)
-
-        // Superior esquerdo
+        // Top left
         this.scene.pushMatrix();
         this.scene.translate(-s + r, s - r, 0);
         this.scene.rotate(Math.PI / 2, 0, 0, 1);
@@ -81,14 +79,14 @@ export class MyRoundedSquare extends CGFobject {
         this.corner.display();
         this.scene.popMatrix();
 
-        // Superior direito
+        // Top right
         this.scene.pushMatrix();
         this.scene.translate(s - r, s - r, 0);
         this.scene.scale(r, r, 1);
         this.corner.display();
         this.scene.popMatrix();
 
-        // Inferior direito
+        // Bottom right
         this.scene.pushMatrix();
         this.scene.translate(s - r, -s + r, 0);
         this.scene.rotate(3 * Math.PI / 2, 0, 0, 1);
@@ -96,7 +94,7 @@ export class MyRoundedSquare extends CGFobject {
         this.corner.display();
         this.scene.popMatrix();
 
-        // Inferior esquerdo
+        // Bottom left
         this.scene.pushMatrix();
         this.scene.translate(-s + r, -s + r, 0);
         this.scene.rotate(Math.PI, 0, 0, 1); 

@@ -6,7 +6,7 @@ export class MyLake extends CGFobject {
         super(scene);
         this.hexagon = new MyHexagon(scene);
 
-        // Material para o lago
+        // Lake material and texture
         this.waterTexture = new CGFtexture(scene, 'texture/water.jpg');
         this.waterMaterial = new CGFappearance(scene);
         this.waterMaterial.setTexture(this.waterTexture);
@@ -21,7 +21,7 @@ export class MyLake extends CGFobject {
     display() {
         this.scene.pushMatrix();
         this.waterMaterial.apply();
-        this.scene.scale(5, 5, 1); // Escala para ajustar o tamanho do lago
+        this.scene.scale(5, 5, 1);
         this.hexagon.display();
         this.scene.popMatrix();
     }}

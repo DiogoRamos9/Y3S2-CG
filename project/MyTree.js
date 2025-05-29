@@ -35,7 +35,7 @@ export class MyTree extends CGFobject {
         this.trunkAppearance = new CGFappearance(scene);
         this.trunkAppearance.setTexture(this.trunkTexture);
         this.trunkAppearance.setTextureWrap('REPEAT', 'REPEAT');
-        this.trunkAppearance.setAmbient(0.4, 0.2, 0.1, 1.0); // Brown color
+        this.trunkAppearance.setAmbient(0.4, 0.2, 0.1, 1.0);
         this.trunkAppearance.setDiffuse(0.4, 0.2, 0.1, 1.0);
         this.trunkAppearance.setSpecular(0.1, 0.1, 0.1, 1.0);
         this.trunkAppearance.setShininess(10.0);
@@ -44,11 +44,11 @@ export class MyTree extends CGFobject {
         this.cupAppearance = new CGFappearance(scene);
         this.cupAppearance.setTexture(this.cupTexture);
         this.cupAppearance.setTextureWrap('REPEAT', 'REPEAT');
-        this.cupAppearance.setAmbient(this.treeTopColor[0], this.treeTopColor[1], this.treeTopColor[2], 1.0); // Green color
+        this.cupAppearance.setAmbient(this.treeTopColor[0], this.treeTopColor[1], this.treeTopColor[2], 1.0);
         this.cupAppearance.setDiffuse(this.treeTopColor[0], this.treeTopColor[1], this.treeTopColor[2], 1.0);
         this.cupAppearance.setSpecular(0.1, 0.1, 0.1, 1.0);
         this.cupAppearance.setShininess(10.0);
-        this.cupAppearance.setAmbient(this.treeTopColor[0] * 0.5, this.treeTopColor[1] * 0.5, this.treeTopColor[2] * 0.5, 1.0); // Darker green
+        this.cupAppearance.setAmbient(this.treeTopColor[0] * 0.5, this.treeTopColor[1] * 0.5, this.treeTopColor[2] * 0.5, 1.0);
         this.cupAppearance.setDiffuse(this.treeTopColor[0] * 0.5, this.treeTopColor[1] * 0.5, this.treeTopColor[2] * 0.5, 1.0);
     }
 
@@ -56,8 +56,7 @@ export class MyTree extends CGFobject {
         // Apply inclination transformation
         this.scene.pushMatrix();
     
-        // Escalar a árvore de forma uniforme
-        const scaleFactor = 3; // Fator de escala (ajuste conforme necessário)
+        const scaleFactor = 3;
         this.scene.scale(scaleFactor, scaleFactor, scaleFactor);
     
         if (this.xInclination) {
@@ -75,12 +74,12 @@ export class MyTree extends CGFobject {
     
         // Display the cup (stack of pyramids with overlap)
         for (let i = 0; i < this.numPyramids; i++) {
-            const heightOffset = this.treeHeight - this.cupHeight + i * (this.cupHeight / this.numPyramids) * 0.35; // Ajuste para sobreposição (0.7 factor)
+            const heightOffset = this.treeHeight - this.cupHeight + i * (this.cupHeight / this.numPyramids) * 0.35;
             const scaleFactor = 1 - i / this.numPyramids;
     
             this.scene.pushMatrix();
-            this.scene.translate(0, heightOffset, 0); // Posicionar cada pirâmide
-            this.scene.scale(scaleFactor, 1, scaleFactor); // Escalar a pirâmide
+            this.scene.translate(0, heightOffset, 0);
+            this.scene.scale(scaleFactor, 1, scaleFactor);
             this.cupAppearance.apply();
             this.cup[i].display();
             this.scene.popMatrix();

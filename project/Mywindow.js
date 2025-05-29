@@ -6,10 +6,8 @@ export class MyWindow extends CGFobject {
         super(scene);
         this.scene = scene;
 
-    
         this.plane = new MyPlane(scene,64);
 
-        
         this.material = new CGFappearance(scene); 
         this.material.setTexture(texture); 
         this.material.setTextureWrap('REPEAT', 'REPEAT');
@@ -17,7 +15,6 @@ export class MyWindow extends CGFobject {
     }
 
     display() {
-
         this.scene.pushMatrix();
         this.material.apply(); 
         this.scene.scale(3,3,3);

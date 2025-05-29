@@ -1,4 +1,4 @@
-import { CGFscene, CGFcamera, CGFaxis, CGFappearance, CGFshader, CGFtexture } from "../lib/CGF.js";
+import { CGFscene, CGFcamera, CGFaxis, CGFappearance, CGFtexture } from "../lib/CGF.js";
 import { MyPlane } from "./MyPlane.js";
 import { MySphere } from "./MySphere.js";
 import { MyPanorama } from "./MyPanorama.js";
@@ -46,7 +46,7 @@ export class MyScene extends CGFscene {
     this.initCameras();
     this.initLights();
 
-    //Background color
+    // Background color
     this.gl.clearColor(0, 0, 0, 1.0);
 
     this.gl.clearDepth(100.0);
@@ -58,7 +58,7 @@ export class MyScene extends CGFscene {
 
     this.setUpdatePeriod(50);
 
-
+    // Initialize textures and appearances
     this.panoramaTexture = new CGFtexture(this, "texture/panorama.jpg");
     this.cloudsTexture = new CGFtexture(this, "texture/clouds.png");
     
@@ -81,14 +81,23 @@ export class MyScene extends CGFscene {
     this.placarappearance.setTexture(this.placarTexture);
     this.placarappearance.setTextureWrap("REPEAT", "REPEAT");
 
-    //Initialize scene objects
+    this.earthTexture = new CGFtexture(this, "texture/earth.jpg");
+    this.earthappearance = new CGFappearance(this);
+    this.earthappearance.setTexture(this.earthTexture);
+    this.earthappearance.setTextureWrap("REPEAT", "REPEAT");
+
+    this.grassTexture = new CGFtexture(this, "texture/grass.jpg");
+    this.grassappearance = new CGFappearance(this);
+    this.grassappearance.setTexture(this.grassTexture);
+    this.grassappearance.setTextureWrap("REPEAT", "REPEAT");
+
+    // Initialize scene objects
     this.axis = new CGFaxis(this, 20, 1);
     this.plane = new MyPlane(this, 64);
     this.sphere = new MySphere(this, false, 64, 64, true);
     this.panorama = new MyPanorama(this, this.panoramaTexture);
     this.window = new MyWindow(this, this.windowTexture);
     this.door = new MyDoor(this, this.doorTexture, this.placarTexture);
-
     this.currentBuildingWidth = this.buildingwidth;
     this.currentNumFloors = this.numfloors;
     this.currentNumWindows = this.numwindows;
@@ -99,7 +108,7 @@ export class MyScene extends CGFscene {
         this.xInclination,
         this.trunkRadius,
         this.treeHeight,
-        this.treeTopColor.map(c => c / 255) // Convert RGB to [0, 1] range
+        this.treeTopColor.map(c => c / 255)
     );
     this.forest = new MyForest(this, 5, 4, 22, 22);
     this.heli = new MyHeli(this, 0, this.building.getCentralHeight() + 3, 0, 0, 0);
@@ -107,7 +116,6 @@ export class MyScene extends CGFscene {
     this.fire = new MyFire(this);
 
     this.fire.initShaders(this);
-
 
     this.displayAxis = false;
     this.displayPlane = true;
@@ -123,30 +131,17 @@ export class MyScene extends CGFscene {
     this.displayLake = true;
     this.fireReignite = 0;
     
-
     this.setUpdatePeriod(20);
     this.startime = Date.now();
-
-
-    this.earthTexture = new CGFtexture(this, "texture/earth.jpg");
-    this.earthappearance = new CGFappearance(this);
-    this.earthappearance.setTexture(this.earthTexture);
-    this.earthappearance.setTextureWrap("REPEAT", "REPEAT");
-    
-
-    this.grassTexture = new CGFtexture(this, "texture/grass.jpg");
-    this.grassappearance = new CGFappearance(this);
-    this.grassappearance.setTexture(this.grassTexture);
-    this.grassappearance.setTextureWrap("REPEAT", "REPEAT");
-    
-    
   }
+
   initLights() {
     this.lights[0].setPosition(200, 200, 200, 1);
     this.lights[0].setDiffuse(1.0, 1.0, 1.0, 1.0);
     this.lights[0].enable();
     this.lights[0].update();
   }
+
   initCameras() {
     this.camera = new CGFcamera(
       1.9,
@@ -157,11 +152,11 @@ export class MyScene extends CGFscene {
     );
     this.defaultCamera = this.camera;
   }
+
   checkKeys(value) {
     var text = "Keys pressed: ";
     var keysPressed = false;
 
-    // Check for key codes e.g. in https://keycode.info/
     if (this.gui.isKeyPressed("KeyW") || this.gui.isKeyPressed("ArrowUp")) {
       text += " W ";
       keysPressed = true;
@@ -208,20 +203,20 @@ export class MyScene extends CGFscene {
     }
 
     if (this.gui.isKeyPressed("KeyF")) {
-    text += " F ";
-    keysPressed = true;
-    this.focusheli = true;
-    if (this.heliCamera === null) { 
-        this.heliCamera = new CGFcamera(
-            1.9,
-            1.0,
-            1000,
-            vec3.fromValues(0, 0, 0), 
-            vec3.fromValues(0, 0, 0)
-        );
+        text += " F ";
+        keysPressed = true;
+        this.focusheli = true;
+        if (this.heliCamera === null) { 
+            this.heliCamera = new CGFcamera(
+                1.9,
+                1.0,
+                1000,
+                vec3.fromValues(0, 0, 0), 
+                vec3.fromValues(0, 0, 0)
+            );
+        }
+        this.camera = this.heliCamera;
     }
-    this.camera = this.heliCamera;
-}
 
     if (this.gui.isKeyPressed("KeyC")) {
       text += " C ";
@@ -275,45 +270,45 @@ export class MyScene extends CGFscene {
     }
     
     if (this.focusheli && this.heliCamera !== null) {
-    // Distância atrás e acima do helicóptero
-    const dist = 3;
-    const altura = 8;
+        // Distance for helicopter camera
+        const dist = 3;
+        const altura = 8;
 
-    // Calcula a posição atrás do helicóptero com base na orientação
-    const camX = this.heli.position.x - dist * Math.sin(this.heli.orientation);
-    const camY = this.heli.position.y + altura;
-    const camZ = this.heli.position.z - dist * Math.cos(this.heli.orientation);
+        // Calculate camera position based on helicopter position and orientation
+        const camX = this.heli.position.x - dist * Math.sin(this.heli.orientation);
+        const camY = this.heli.position.y + altura;
+        const camZ = this.heli.position.z - dist * Math.cos(this.heli.orientation);
 
-    this.heliCamera.setPosition(
-        vec3.fromValues(camX, camY, camZ)
-    );
-    this.heliCamera.setTarget(
-        vec3.fromValues(
-            this.heli.position.x,
-            this.heli.position.y,
-            this.heli.position.z
-        )
-    );
-  }
-
-  if(this.fire.extinguished && this.fireReignite > 0){
-    this.fireReignite -= deltaTime;
-    if(this.fireReignite <= 0){
-      this.fire.extinguished = false;
-      this.fireReignite = 0;
+        this.heliCamera.setPosition(
+            vec3.fromValues(camX, camY, camZ)
+        );
+        this.heliCamera.setTarget(
+            vec3.fromValues(
+                this.heli.position.x,
+                this.heli.position.y,
+                this.heli.position.z
+            )
+        );
     }
-}
+
+  if (this.fire.extinguished && this.fireReignite > 0) {
+    this.fireReignite -= deltaTime;
+    if (this.fireReignite <= 0) {
+        this.fire.extinguished = false;
+        this.fireReignite = 0;
+    }
+  }
     
-    
+    // Update the fire if it is not extinguished
     let time = (t - this.startime) / 1000.0;
     this.heli.update(time, this.speedFactor);
     this.checkKeys(this.speedFactor/200);
 
-    if(this.fire.fireShader){
+    if (this.fire.fireShader) {
       this.fire.fireShader.setUniformsValues({ uTime: time/5 });
     }
 
-    if(this.building) {
+    if (this.building) {
       this.building.update(t);
     }
   }
@@ -324,6 +319,7 @@ export class MyScene extends CGFscene {
     this.setSpecular(0.5, 0.5, 0.5, 1.0);
     this.setShininess(10.0);
   }
+
   display() {
     // ---- BEGIN Background, camera and axis setup
     // Clear image and depth buffer everytime we update the scene
@@ -339,11 +335,11 @@ export class MyScene extends CGFscene {
     if (this.displayAxis) {
       this.axis.display();
     }
-    
 
     this.setDefaultAppearance();
     
-    if(this.displayPlane){
+    // Draw everything else
+    if (this.displayPlane) {
       this.pushMatrix();
       this.scale(400, 1, 400);
       this.rotate(-Math.PI / 2, 1, 0, 0);
@@ -352,7 +348,7 @@ export class MyScene extends CGFscene {
       this.popMatrix();
     }
 
-    if(this.displaySphere){
+    if (this.displaySphere) {
       this.pushMatrix();
       this.scale(10, 10, 10);
       this.rotate(-Math.PI, 0, 1, 0);
@@ -361,40 +357,29 @@ export class MyScene extends CGFscene {
       this.popMatrix();
     }
 
-    if(this.displayPanorama){
+    if (this.displayPanorama) {
       this.panorama.display();
     }
     
     
     if (this.displayBuilding) {
-  
-    if (
-        this.currentBuildingWidth !== this.buildingwidth ||
-        this.currentNumFloors !== this.numfloors ||
-        this.currentNumWindows !== this.numwindows
-    ) {
-        
-        this.currentBuildingWidth = this.buildingwidth;
-        this.currentNumFloors = this.numfloors;
-        this.currentNumWindows = this.numwindows;
-
-        
-        this.building = new MyBuilding(
-            this,
-            this.buildingwidth,
-            this.numfloors,
-            this.numwindows,
-            this.windowTexture,
-            [0.8, 0.8, 0.8],
-            this.doorTexture,
-            this.placarTexture,
-
-        );
+        if (this.currentBuildingWidth !== this.buildingwidth || this.currentNumFloors !== this.numfloors || this.currentNumWindows !== this.numwindows) {
+            this.currentBuildingWidth = this.buildingwidth;
+            this.currentNumFloors = this.numfloors;
+            this.currentNumWindows = this.numwindows;
+            this.building = new MyBuilding(
+                this,
+                this.buildingwidth,
+                this.numfloors,
+                this.numwindows,
+                this.windowTexture,
+                [0.8, 0.8, 0.8],
+                this.doorTexture,
+                this.placarTexture,
+            );
+        }
+        this.building.display();
     }
-
-   
-    this.building.display();
-}
 
     if (this.displayTree) {
         this.tree = new MyTree(
@@ -403,7 +388,7 @@ export class MyScene extends CGFscene {
             this.xInclination,
             this.trunkRadius,
             this.treeHeight,
-            this.treeTopColor.map(c => c / 255) // Converter RGB para o intervalo [0, 1]
+            this.treeTopColor.map(c => c / 255)
         );
         this.tree.display();
     }
@@ -423,7 +408,6 @@ export class MyScene extends CGFscene {
       this.scale(7 , 6 , 6); 
       this.heli.display();
       this.popMatrix();
-
     }
 
     if (this.displayFire) {
@@ -437,17 +421,10 @@ export class MyScene extends CGFscene {
     if (this.displayLake) {
       this.pushMatrix();
       this.translate(-50, 0.02, 50);
-      this.rotate(Math.PI/2, 1, 0 ,0) // Ajustar a escala do lago
+      this.rotate(Math.PI/2, 1, 0 ,0);
       this.scale(5, 5, 5 );
       this.lake.display();
       this.popMatrix();
     }
-
-    // ---- END Background, camera and axis setup
-
-   
-    
-    
-
   }
 }

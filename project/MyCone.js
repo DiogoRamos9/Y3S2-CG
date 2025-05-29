@@ -44,7 +44,7 @@ export class MyCone extends CGFobject {
         for (let i = 0; i < this.slices; i++) {
             const base = i * 2;
 
-            // Triângulos da lateral
+            // Triangles for the sides
             this.indices.push(base, base + 1, base + 2);
             this.indices.push(base + 1, base + 3, base + 2);
         }

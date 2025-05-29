@@ -1,4 +1,4 @@
-import { CGFobject , CGFappearance, CGFtexture } from '../../lib/CGF.js';
+import { CGFobject } from '../../lib/CGF.js';
 
 export class MyCircle extends CGFobject {
     constructor(scene, radius, slices) {

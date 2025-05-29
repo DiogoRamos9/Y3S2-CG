@@ -21,54 +21,56 @@ export class MyBuilding extends CGFobject {
         this.lateralHeight = Math.round((this.centralHeight * 0.75) / 5) * 5; // Height of the lateral modules (75% of central)
 
         this.door = new MyDoor(scene, doorTexture, signTexture); // Door and sign
-        this.window = new MyWindow(scene, windowTexture); // Window
-        this.wall = new MyPlane(scene, 64); // Use MyPlane for walls
+        this.window = new MyWindow(scene, windowTexture); // Windows 
+        this.wall = new MyPlane(scene, 64); // Wall of the building 
         this.heliport = new MyCircle(scene, 1, 64); // Helicopter landing pad
 
         this.isTakingOff = false; // Flag for helicopter taking off
         this.isLanding = false; // Flag for helicopter landing
         this.isManeuver = false; // Flag for helicopter maneuvering
 
+        // Create material for the walls of the building
         this.wallMaterial = new CGFappearance(scene);
         this.wallMaterial.setAmbient(this.buildingColor[0], this.buildingColor[1], this.buildingColor[2], 1.0);
-        this.wallMaterial.setDiffuse(0.0, 0.0, 0.0, 1.0);   // Sem difuso
-        this.wallMaterial.setSpecular(0.0, 0.0, 0.0, 1.0);  // Sem especular
+        this.wallMaterial.setDiffuse(0.0, 0.0, 0.0, 1.0);
+        this.wallMaterial.setSpecular(0.0, 0.0, 0.0, 1.0);
         this.wallMaterial.setShininess(1.0); 
 
         // Create textures for different phases of helicopter landing and takeoff
         this.heliTexture = new CGFtexture(scene, 'texture/heliporto.png');
-        this.helicopterMaterial = new CGFappearance(scene);
-        this.helicopterMaterial.setTexture(this.heliTexture);
-        this.helicopterMaterial.setTextureWrap('REPEAT', 'REPEAT');
+        this.heliportMaterial = new CGFappearance(scene);
+        this.heliportMaterial.setTexture(this.heliTexture);
+        this.heliportMaterial.setTextureWrap('REPEAT', 'REPEAT');
         
+        // Textures for helicopter taking off and landing
         this.heliTextureTakingOff = new CGFtexture(scene, 'texture/heliporto_up.png');
-        this.helicopterMaterialTakingOff = new CGFappearance(scene);
-        this.helicopterMaterialTakingOff.setTexture(this.heliTextureTakingOff);
-        this.helicopterMaterialTakingOff.setTextureWrap('REPEAT', 'REPEAT');
-
+        this.heliportMaterialTakingOff = new CGFappearance(scene);
+        this.heliportMaterialTakingOff.setTexture(this.heliTextureTakingOff);
+        this.heliportMaterialTakingOff.setTextureWrap('REPEAT', 'REPEAT');
+        
         this.heliTextureLanding = new CGFtexture(scene, 'texture/heliporto_down.png');
-        this.helicopterMaterialLanding = new CGFappearance(scene);
-        this.helicopterMaterialLanding.setTexture(this.heliTextureLanding);
-        this.helicopterMaterialLanding.setTextureWrap('REPEAT', 'REPEAT');
+        this.heliportMaterialLanding = new CGFappearance(scene);
+        this.heliportMaterialLanding.setTexture(this.heliTextureLanding);
+        this.heliportMaterialLanding.setTextureWrap('REPEAT', 'REPEAT');
 
-        // Add maneuver objects
+        // Add maneuver lights
         this.warningLight = new MyUnitCube(scene);
         
-        // Material para as luzes em estado normal
+        // Warning light material (non-emissive)
         this.warningLightMaterial = new CGFappearance(scene);
-        this.warningLightMaterial.setAmbient(0.8, 0.0, 0.0, 1.0);  // Vermelho
+        this.warningLightMaterial.setAmbient(0.8, 0.0, 0.0, 1.0);
         this.warningLightMaterial.setDiffuse(0.8, 0.0, 0.0, 1.0);
         this.warningLightMaterial.setSpecular(0.5, 0.5, 0.5, 1.0);
         this.warningLightMaterial.setShininess(10);
         
-        // Material para as luzes em estado de manobra (emissivo)
+        // Warning light emissive material (for pulsating effect)
         this.warningLightEmissiveMaterial = new CGFappearance(scene);
-        this.warningLightEmissiveMaterial.setAmbient(1.0, 0.7, 0.0, 1.0);  // Laranja/âmbar
+        this.warningLightEmissiveMaterial.setAmbient(1.0, 0.7, 0.0, 1.0);
         this.warningLightEmissiveMaterial.setDiffuse(1.0, 0.7, 0.0, 1.0);
         this.warningLightEmissiveMaterial.setSpecular(1.0, 1.0, 1.0, 1.0);
         this.warningLightEmissiveMaterial.setShininess(100);
         
-        // Iniciamos o tempo para a animação pulsante
+        // Start time for pulsating lights
         this.startTime = Date.now();
 
         // Control texture swapping
@@ -89,6 +91,7 @@ export class MyBuilding extends CGFobject {
         this.displayModule(this.centralWidth / 2 + this.lateralWidth / 2, this.lateralWidth, this.lateralHeight, this.lateralWidth, false);
     }
 
+    // Toggle heliport texture based on landing/taking off state
     toggleHeliportTexture() {
         const currentTime = Date.now();
         if (currentTime - this.lastTextureToggleTime > this.textureToggleInterval) {
@@ -97,6 +100,7 @@ export class MyBuilding extends CGFobject {
         }
     }
 
+    // To get the current state of the helicopter landing/taking off to display the heliport correctly
     heliLandingTakeOff(isLanding, isTakingOff) {
         this.isLanding = isLanding;
         this.isTakingOff = isTakingOff;
@@ -139,15 +143,23 @@ export class MyBuilding extends CGFobject {
         this.wall.display();
         this.scene.popMatrix();
 
-        // Top Wall
+        // Central Building has a heliport and warning lights
         if (isCentral) {
-            // Top Wall (Plano como base)
+            // Top Wall
             this.scene.pushMatrix();
             this.scene.translate(x, height, 0);
             this.scene.rotate(-Math.PI / 2, 1, 0, 0);
             this.scene.scale(width, depth, 1);
-            this.wallMaterial.apply(); // Aplicar a cor do prédio
-            this.wall.display(); // Exibir o plano como base
+            this.wallMaterial.apply();
+            this.wall.display();
+            this.scene.popMatrix();
+
+            // Door
+            this.scene.pushMatrix();
+            this.scene.translate(x, 5.0, depth / 2 + 0.01);
+            this.scene.scale(0.50, 0.50, 0.50);
+            this.scene.translate(0, -6.5, 0);
+            this.door.display();
             this.scene.popMatrix();
 
             // Heliport Circle
@@ -156,50 +168,54 @@ export class MyBuilding extends CGFobject {
             this.scene.rotate(-Math.PI / 2, 1, 0, 0);
             this.scene.scale(width / 2, width / 2, 1);
         
+            // Apply the appropriate material based on the helicopter's state
+            // Taking off -> heliportMaterialTakingOff
+            // Landing -> heliportMaterialLanding
+            // Normal state -> heliportMaterial
             if (this.isTakingOff) {
                 if (this.showNormalTexture) {
-                    this.helicopterMaterial.apply();
-                } else {
-                    this.helicopterMaterialTakingOff.apply();
+                    this.heliportMaterial.apply();
                 }
-            } else if (this.isLanding) {
+                else {
+                    this.heliportMaterialTakingOff.apply();
+                }
+            }
+            else if (this.isLanding) {
                 if (this.showNormalTexture) {
-                    this.helicopterMaterial.apply();
-                } else {
-                    this.helicopterMaterialLanding.apply();
+                    this.heliportMaterial.apply();
                 }
-            } else {
-                this.helicopterMaterial.apply();
+                else {
+                    this.heliportMaterialLanding.apply();
+                }
+            }
+            else {
+                this.heliportMaterial.apply();
             }
 
             this.heliport.display();
             this.scene.popMatrix();
 
-            // Na parte que desenha as luzes de aviso
+            // Draw warning lights on the heliport corners
             this.scene.pushMatrix();
             const isManeuver = this.isLanding || this.isTakingOff;
             if (isManeuver) {
                 this.updatePulsatingLights();
             }
-
-            // Tamanho e posição das luzes de aviso
             const lightSize = 0.7;
-            const lightOffset = width * 0.6;  // Reduzindo um pouco a distância
-
-            // Desenhar as quatro luzes nos cantos do heliporto
+            const lightOffset = width * 0.6;
             for (let i = 0; i < 4; i++) {
-                const angle = (i * Math.PI / 2) + (Math.PI / 4);  // 45º, 135º, 225º, 315º
+                const angle = (i * Math.PI / 2) + (Math.PI / 4);
                 const cornerX = x + Math.cos(angle) * lightOffset;
                 const cornerZ = Math.sin(angle) * lightOffset;
                 
                 this.scene.pushMatrix();
-                this.scene.translate(cornerX, height + 0.15, cornerZ);  // Elevado para ficar visível
+                this.scene.translate(cornerX, height + 0.15, cornerZ);
                 this.scene.scale(lightSize, lightSize, lightSize);
-                
-                // Aplicar material adequado baseado no estado de manobra
+                // Apply the appropriate material based on the helicopter's state
                 if (isManeuver) {
                     this.warningLightEmissiveMaterial.apply();
-                } else {
+                }
+                else {
                     this.warningLightMaterial.apply();
                 }
                 
@@ -209,14 +225,15 @@ export class MyBuilding extends CGFobject {
 
             this.scene.popMatrix();
         }
-        else{
-        this.scene.pushMatrix();
-        this.scene.translate(x, height, 0);
-        this.scene.rotate(-Math.PI / 2, 1, 0, 0);
-        this.scene.scale(width, depth, 1);
-        this.wallMaterial.apply();
-        this.wall.display();
-        this.scene.popMatrix();}
+        else {
+            this.scene.pushMatrix();
+            this.scene.translate(x, height, 0);
+            this.scene.rotate(-Math.PI / 2, 1, 0, 0);
+            this.scene.scale(width, depth, 1);
+            this.wallMaterial.apply();
+            this.wall.display();
+            this.scene.popMatrix();
+        }
 
         // Bottom Wall (optional, not visible)
         this.scene.pushMatrix();
@@ -226,23 +243,11 @@ export class MyBuilding extends CGFobject {
         this.wallMaterial.apply();
         this.wall.display();
         this.scene.popMatrix();
-
-        // Add door and windows only for the central module
-        if (isCentral) {
-            // Door
-            this.scene.pushMatrix();
-            this.scene.translate(x, 5.0, depth / 2 + 0.01);
-            this.scene.scale(0.50, 0.50, 0.50);
-            this.scene.translate(0, -6.5, 0);
-            this.door.display();
-            this.scene.popMatrix();
-        }
         
+        // Windows considering if it's a central building or lateral bulding
         const floors = isCentral ? this.numFloors : Math.round(this.lateralHeight / 5);
-
-        // Windows (only on front and back walls)
         for (let floor = 0; floor < floors; floor++) {
-            // Se for módulo central e estiver no R/C, não desenhar janelas
+            // Do not draw windows on the ground floor of the central building
             if (isCentral && floor === 0) continue;
         
             for (let i = 0; i < this.windowsPerFloor; i++) {
@@ -283,7 +288,8 @@ export class MyBuilding extends CGFobject {
         );
     }
 
-    update(t) {
+    // Update heliport texture and lights based on the helicopter's state
+    update() {
         if (this.isLanding || this.isTakingOff) {
             this.updatePulsatingLights();
             this.toggleHeliportTexture();
